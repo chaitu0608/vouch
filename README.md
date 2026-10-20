@@ -2,6 +2,9 @@
 
 **The flight recorder for AI agents.** Browsy captures the web. Clinqy captures the Mac. Witness turns both into a verifiable run — every action, snapshot, and screen check, sealed with a SHA-256 hash chain.
 
+**Live:** [witness-chaitu0608.vercel.app](https://witness-chaitu0608.vercel.app)  
+**Source:** [github.com/chaitu0608/witness](https://github.com/chaitu0608/witness)
+
 The hosted app is an **evidence room**: a renderer for sealed JSON runs. The recorder runs locally, next to Chrome and the Mac. There is no backend, no account, and no upload endpoint.
 
 ---
@@ -159,6 +162,8 @@ vercel --prod
 ```
 
 No environment variables. The build runs `prebuild` → `seal` → `next build`, so every deployment gets a deterministic chain over the committed runs.
+
+The current deployment lives at [witness-chaitu0608.vercel.app](https://witness-chaitu0608.vercel.app).
 
 ## Repo layout
 

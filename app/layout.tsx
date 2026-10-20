@@ -16,6 +16,7 @@ const mono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://witness-chaitu0608.vercel.app"),
   title: {
     default: "Witness — the flight recorder for AI agents",
     template: "%s · Witness",
@@ -32,11 +33,20 @@ export const metadata: Metadata = {
     "flight recorder",
   ],
   authors: [{ name: "Chaitu" }],
+  alternates: { canonical: "/" },
   openGraph: {
     title: "Witness — the flight recorder for AI agents",
     description:
       "Cross-surface agent runs with receipts. Browsy + Clinqy, sealed with a SHA-256 chain.",
     type: "website",
+    url: "/",
+    siteName: "Witness",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Witness — the flight recorder for AI agents",
+    description:
+      "Cross-surface agent runs with receipts. Browsy + Clinqy, sealed with a SHA-256 chain.",
   },
 };
 
