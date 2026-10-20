@@ -40,18 +40,18 @@ export default function ImportedRun() {
   if (!run) {
     return (
       <div className="panel mx-auto max-w-xl p-8 text-center">
-        <span className="mx-auto flex h-11 w-11 items-center justify-center rounded-xl border border-white/10 bg-white/[0.03] text-mist">
+        <span className="mx-auto flex h-11 w-11 items-center justify-center rounded-full border border-line bg-paper-2/50 text-mist">
           <FileJson size={18} strokeWidth={1.6} />
         </span>
-        <h1 className="mt-4 text-xl font-semibold tracking-[-0.03em] text-chalk">
+        <h1 className="display mt-4 text-[30px] leading-none text-ink">
           No imported run yet
         </h1>
-        <p className="mt-2 text-sm leading-relaxed text-mist">
-          Import a Witness JSON file and it will render here, entirely in your
+        <p className="mt-2 text-[12px] leading-relaxed text-mist">
+          Import a Vouch JSON file and it will render here, entirely in your
           browser. Nothing is uploaded.
         </p>
         <Link href="/capture" className="btn-primary mt-5 inline-flex">
-          <Upload size={14} /> Import a run
+          <Upload size={13} /> Import a run
         </Link>
       </div>
     );
@@ -61,27 +61,29 @@ export default function ImportedRun() {
     <div>
       <Link
         href="/capture"
-        className="inline-flex items-center gap-1.5 text-xs text-mist hover:text-chalk"
+        className="inline-flex items-center gap-1.5 text-[11px] text-mist transition-colors hover:text-ink"
       >
-        <ArrowLeft size={13} /> Capture
+        <ArrowLeft size={12} /> Capture
       </Link>
 
-      <div className="mt-5 flex flex-wrap items-center gap-2">
-        <ModeBadge mode="imported" />
-        <span className="chip">
-          <Lock size={10} /> local only
-        </span>
-        <span className="chip">{formatDate(run.startedAt)}</span>
+      <div className="mt-6 border-b border-line pb-8">
+        <div className="flex flex-wrap items-center gap-2">
+          <ModeBadge mode="imported" />
+          <span className="chip">
+            <Lock size={9} /> local only
+          </span>
+          <span className="chip">{formatDate(run.startedAt)}</span>
+        </div>
+
+        <h1 className="display mt-5 max-w-4xl text-[42px] leading-[0.95] text-ink sm:text-[54px]">
+          {run.title}
+        </h1>
+        <p className="mt-4 max-w-3xl text-[14px] leading-relaxed text-mist">
+          {run.summary}
+        </p>
       </div>
 
-      <h1 className="mt-4 max-w-3xl text-3xl font-semibold tracking-[-0.045em] text-chalk sm:text-4xl">
-        {run.title}
-      </h1>
-      <p className="mt-3 max-w-3xl text-sm leading-relaxed text-mist">
-        {run.summary}
-      </p>
-
-      <div className="mt-5 flex items-start gap-2 rounded-xl border border-sky/20 bg-sky/[0.03] p-3 text-xs leading-relaxed text-sky">
+      <div className="mt-5 flex items-start gap-2 rounded-lg border border-sky/25 bg-sky/[0.04] p-3.5 text-[11px] leading-relaxed text-sky">
         <Lock size={13} className="mt-0.5 shrink-0" />
         Imported from a local file. It was never uploaded, and this page has no
         backend to receive it.

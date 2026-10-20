@@ -11,7 +11,7 @@ import {
 } from "lucide-react";
 import type { Run } from "@/lib/types";
 
-export const IMPORT_STORAGE_KEY = "witness:lastRun";
+export const IMPORT_STORAGE_KEY = "vouch:lastRun";
 
 type ImportState =
   | { kind: "idle" }
@@ -66,7 +66,7 @@ export default function ImportRun() {
       const run = normalize(parsed);
       if (!run) {
         throw new Error(
-          "That JSON does not look like a Witness run. It needs id, title, and events[]."
+          "That JSON does not look like a Vouch run. It needs id, title, and events[]."
         );
       }
       window.localStorage.setItem(IMPORT_STORAGE_KEY, JSON.stringify(run));
@@ -104,10 +104,10 @@ export default function ImportRun() {
           const file = event.dataTransfer.files?.[0];
           if (file) void handleFile(file);
         }}
-        className={`cursor-pointer rounded-2xl border border-dashed p-8 text-center transition-colors ${
+        className={`cursor-pointer rounded-lg border border-dashed p-6 text-center transition-colors ${
           dragging
             ? "border-lime/50 bg-lime/[0.04]"
-            : "border-white/[0.12] bg-white/[0.015] hover:border-white/25 hover:bg-white/[0.03]"
+            : "border-line bg-paper-2/30 hover:border-line-strong hover:bg-paper-2/60"
         }`}
       >
         <input
@@ -120,50 +120,50 @@ export default function ImportRun() {
             if (file) void handleFile(file);
           }}
         />
-        <span className="mx-auto flex h-11 w-11 items-center justify-center rounded-xl border border-white/10 bg-white/[0.03] text-mist">
-          <Upload size={18} strokeWidth={1.6} />
+        <span className="mx-auto flex h-10 w-10 items-center justify-center rounded-full border border-line bg-panel text-mist">
+          <Upload size={16} strokeWidth={1.6} />
         </span>
-        <p className="mt-4 text-sm font-medium text-chalk">
-          Drop a Witness JSON file
+        <p className="mt-3 text-[12px] font-medium text-ink">
+          Drop a Vouch JSON file
         </p>
-        <p className="mt-1 text-xs text-mist">
+        <p className="mt-1 font-mono text-[8px] uppercase tracking-[0.1em] text-mist">
           or click to choose · it stays in this browser
         </p>
       </div>
 
       {state.kind === "error" && (
-        <div className="mt-3 flex items-start gap-2 rounded-xl border border-ember/20 bg-ember/[0.04] p-3 text-xs text-ember">
-          <TriangleAlert size={14} className="mt-0.5 shrink-0" />
+        <div className="mt-3 flex items-start gap-2 rounded-lg border border-ember/25 bg-ember/[0.04] p-3 text-[10px] leading-relaxed text-ember">
+          <TriangleAlert size={13} className="mt-0.5 shrink-0" />
           {state.message}
         </div>
       )}
 
       {state.kind === "ok" && (
-        <div className="mt-4 rounded-xl border border-lime/20 bg-lime/[0.03] p-4">
+        <div className="mt-4 rounded-lg border border-mint/25 bg-mint/[0.035] p-4">
           <div className="flex flex-wrap items-center gap-2">
-            <ShieldCheck size={14} className="text-lime" />
-            <span className="text-xs font-medium text-chalk">
+            <ShieldCheck size={13} className="text-mint" />
+            <span className="text-[11px] font-medium text-ink">
               {state.run.title}
             </span>
-            <span className="ml-auto font-mono text-[9px] uppercase tracking-[0.1em] text-lime">
+            <span className="ml-auto font-mono text-[8px] uppercase tracking-[0.1em] text-mint">
               {state.run.events.length} events
             </span>
           </div>
-          <p className="mt-1.5 text-[11px] leading-relaxed text-mist">
+          <p className="mt-1.5 text-[10px] leading-relaxed text-mist">
             Loaded into this browser only. The file was not uploaded.
           </p>
           <div className="mt-3 flex flex-wrap items-center gap-4">
             <Link
               href="/runs/local"
-              className="inline-flex items-center gap-1 text-xs font-medium text-lime hover:text-[#dcff8a]"
+              className="inline-flex items-center gap-1 text-[11px] font-medium text-lime hover:opacity-70"
             >
-              Open imported run <ArrowUpRight size={12} />
+              Open imported run <ArrowUpRight size={11} />
             </Link>
             <Link
               href="/runs/run-admin"
-              className="inline-flex items-center gap-1 text-xs text-mist hover:text-chalk"
+              className="inline-flex items-center gap-1 text-[10px] text-mist hover:text-ink"
             >
-              <FileJson size={12} /> See a sealed example
+              <FileJson size={11} /> See a sealed example
             </Link>
           </div>
         </div>

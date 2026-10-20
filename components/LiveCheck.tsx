@@ -1,17 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import {
-  CheckCircle2,
-  Loader2,
-  PlugZap,
-  Unplug,
-} from "lucide-react";
+import { CheckCircle2, Loader2, PlugZap, Unplug } from "lucide-react";
 
 type LiveResponse = {
   live: boolean;
-  browsy?: boolean;
-  clinqy?: boolean;
+  browser?: boolean;
+  native?: boolean;
   error?: string;
 };
 
@@ -28,7 +23,7 @@ export default function LiveCheck() {
     } catch {
       setData({
         live: false,
-        error: "The local runtime did not answer.",
+        error: "The local bridge did not answer.",
       });
     } finally {
       setStatus("done");
@@ -37,63 +32,65 @@ export default function LiveCheck() {
 
   return (
     <div className="panel overflow-hidden">
-      <div className="flex flex-col gap-4 border-b border-white/[0.06] p-5 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex flex-col gap-4 border-b border-line p-5 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <p className="eyebrow">Local bridge</p>
-          <h3 className="mt-1 text-lg font-semibold tracking-[-0.03em] text-chalk">
+          <h3 className="mt-1 text-[16px] font-medium text-ink">
             This site cannot see your Mac. That is the design.
           </h3>
-          <p className="mt-1 max-w-xl text-xs leading-relaxed text-mist">
-            On Vercel, <code className="font-mono text-[11px] text-chalk/80">127.0.0.1:8787</code>{" "}
-            is unreachable. Run the viewer locally next to Job Pilot to turn
-            this into a live engine check.
+          <p className="mt-1 max-w-xl text-[11px] leading-relaxed text-mist">
+            On Vercel,{" "}
+            <code className="font-mono text-[10px] text-ink">
+              127.0.0.1:8787
+            </code>{" "}
+            is unreachable. Run the viewer locally next to the bridge to turn
+            this into a live surface check.
           </p>
         </div>
         <button
           type="button"
           onClick={() => void check()}
           disabled={status === "loading"}
-          className="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/[0.03] px-4 py-2.5 text-xs font-medium text-chalk transition-colors hover:border-lime/30 hover:text-lime disabled:opacity-60"
+          className="inline-flex shrink-0 items-center justify-center gap-2 rounded border border-line bg-paper-2/45 px-4 py-2.5 text-[11px] font-medium text-ink transition-colors hover:border-line-strong hover:text-lime disabled:opacity-60"
         >
           {status === "loading" ? (
-            <Loader2 size={14} className="animate-spin" />
+            <Loader2 size={13} className="animate-spin" />
           ) : (
-            <PlugZap size={14} />
+            <PlugZap size={13} />
           )}
           {status === "loading" ? "Checking…" : "Check this Mac"}
         </button>
       </div>
 
-      <div className="grid gap-px bg-white/[0.06] sm:grid-cols-2">
+      <div className="grid gap-px bg-line sm:grid-cols-2">
         <EngineRow
-          name="Browsy"
+          name="Browser"
           detail="Chrome extension · 17 tools"
-          connected={data?.browsy}
+          connected={data?.browser}
           checked={status === "done"}
         />
         <EngineRow
-          name="Clinqy"
-          detail="Native app · 4 tools"
-          connected={data?.clinqy}
+          name="Native"
+          detail="macOS runtime · 4 tools"
+          connected={data?.native}
           checked={status === "done"}
         />
       </div>
 
       {status === "done" && !data?.live && (
-        <div className="flex items-start gap-2 border-t border-white/[0.06] bg-sky/[0.03] px-5 py-3 text-[11px] leading-relaxed text-sky">
-          <Unplug size={13} className="mt-0.5 shrink-0" />
+        <div className="flex items-start gap-2 border-t border-line bg-sky/[0.04] px-5 py-3 text-[10px] leading-relaxed text-sky">
+          <Unplug size={12} className="mt-0.5 shrink-0" />
           <span>
-            No local runtime from this deployment — expected. To go live:{" "}
-            <code className="font-mono">npm run dev</code> beside{" "}
-            <code className="font-mono">jobpilot/server/http.js</code>.
+            No local bridge from this deployment — expected. To go live:{" "}
+            <code className="font-mono">npm run dev</code> beside the bridge.
           </span>
         </div>
       )}
 
       {status === "done" && data?.live && (
-        <div className="flex items-center gap-2 border-t border-white/[0.06] bg-lime/[0.03] px-5 py-3 text-[11px] text-lime">
-          <CheckCircle2 size={13} /> Local runtime connected. Engine actions are
-          available to the agent.
+        <div className="flex items-center gap-2 border-t border-line bg-mint/[0.04] px-5 py-3 text-[10px] text-mint">
+          <CheckCircle2 size={12} /> Local bridge connected. Both surfaces can
+          report their state.
         </div>
       )}
     </div>
@@ -114,27 +111,23 @@ function EngineRow({
   return (
     <div className="flex items-center justify-between bg-panel px-5 py-4">
       <div>
-        <p className="text-sm font-medium text-chalk">{name}</p>
-        <p className="mt-0.5 font-mono text-[9px] uppercase tracking-[0.1em] text-mist/55">
+        <p className="text-[12px] font-medium text-ink">{name}</p>
+        <p className="mt-0.5 font-mono text-[8px] uppercase tracking-[0.1em] text-mist">
           {detail}
         </p>
       </div>
       <span
-        className={`inline-flex items-center gap-1.5 font-mono text-[9px] uppercase tracking-[0.12em] ${
+        className={`inline-flex items-center gap-1.5 font-mono text-[8px] uppercase tracking-[0.1em] ${
           !checked
-            ? "text-mist/50"
+            ? "text-mist/70"
             : connected
-              ? "text-lime"
-              : "text-mist/60"
+              ? "text-mint"
+              : "text-mist"
         }`}
       >
         <span
           className={`h-1.5 w-1.5 rounded-full ${
-            !checked
-              ? "bg-mist/40"
-              : connected
-                ? "bg-lime"
-                : "bg-mist/40"
+            !checked ? "bg-mist/40" : connected ? "bg-mint" : "bg-mist/50"
           }`}
         />
         {!checked ? "not checked" : connected ? "connected" : "offline"}

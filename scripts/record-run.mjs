@@ -1,10 +1,11 @@
 #!/usr/bin/env node
 /**
- * Witness recorder — a deliberately small MCP stdio client for Job Pilot.
+ * Vouch recorder — a deliberately small MCP stdio client for the local bridge.
  *
- * It drives the read-only half of Browsy, opens exactly one URL, captures a
- * snapshot + screenshot, optionally asks Clinqy for one redacted observation,
- * releases the refs, and seals the whole exchange into a hash-chained run.
+ * It drives the read-only browser surface, opens exactly one URL, captures a
+ * snapshot + screenshot, optionally asks the native runtime for one redacted
+ * observation, releases the refs, and seals the whole exchange into a
+ * hash-chained run.
  *
  * It never clicks, types, submits, sends, or runs a native task.
  *
@@ -17,7 +18,7 @@
  *     --yes
  *
  * --yes acknowledges the two confirmed browser mutations (open + release).
- * --native is opt-in; Clinqy's raw output is never written to the run.
+ * --native is opt-in; native raw output is never written to the run.
  */
 import { spawn } from "node:child_process";
 import crypto from "node:crypto";
@@ -29,17 +30,17 @@ const here = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(here, "..");
 
 function usage() {
-  console.log(`Witness recorder
+  console.log(`Vouch recorder
 
   --task <text>     what this run is proving (required)
   --url <http(s)>   the one page to open and capture (required)
   --out <file>      output JSON (default: data/runs/run-<timestamp>.json)
-  --native          ask Clinqy for one redacted screen observation
+  --native          ask the native runtime for one redacted screen observation
   --yes             acknowledge the open + release mutations
   --help            show this help
 
-The recorder speaks MCP over stdio to Job Pilot. Set JOBPILOT_MCP to override
-the default server path: ../jobpilot/server/mcp.js.
+The recorder speaks MCP over stdio to the local bridge. Set VOUCH_MCP to
+override the default server path.
 `);
 }
 
@@ -99,12 +100,12 @@ function sha256(input) {
 /* ------------------------------------------------------------- MCP client */
 
 const mcpPath =
-  process.env.JOBPILOT_MCP ||
+  process.env.VOUCH_MCP ||
   path.resolve(root, "..", "jobpilot", "server", "mcp.js");
 
 if (!fs.existsSync(mcpPath)) {
   console.error(
-    `Job Pilot MCP server not found at ${mcpPath}\nSet JOBPILOT_MCP to its absolute path.`
+    `Local bridge not found at ${mcpPath}\nSet VOUCH_MCP to its absolute path.`
   );
   process.exit(1);
 }
@@ -115,7 +116,7 @@ const child = spawn(process.execPath, [mcpPath], {
   stdio: ["pipe", "pipe", "pipe"],
 });
 
-if (process.env.WITNESS_DEBUG) {
+if (process.env.VOUCH_DEBUG) {
   child.stderr.on("data", (chunk) => process.stderr.write(chunk));
 }
 
@@ -194,6 +195,19 @@ async function callTool(name, toolArgs) {
 
 /* ---------------------------------------------------------------- recorder */
 
+/**
+ * The bridge keeps compatibility names on the wire. The artifact uses the
+ * public Vouch aliases so a run stays readable without leaking implementation
+ * names into the evidence room.
+ */
+const publicToolName = (tool) =>
+  ({
+    clinqy_look: "native_look",
+    clinqy_stats: "native_stats",
+    clinqy_run: "native_run",
+    clinqy_open: "native_handoff",
+  })[tool] ?? tool;
+
 const startedAt = new Date();
 const events = [];
 const evidenceDir = path.join(root, "public", "evidence");
@@ -247,9 +261,9 @@ async function record(tool, toolArgs, options = {}) {
   if (options.nativeRedaction) {
     evidence.push({
       kind: "screen",
-      label: "Clinqy native observation",
+      label: "Native screen observation",
       content:
-        "Clinqy observed the current screen. The raw description is withheld by the recorder's privacy policy.",
+        "The native runtime observed the current screen. The raw description is withheld by the recorder's privacy policy.",
       note: "redacted by policy",
       redacted: true,
     });
@@ -257,8 +271,8 @@ async function record(tool, toolArgs, options = {}) {
 
   addEvent({
     at: eventAt,
-    tool,
-    title: options.title || tool,
+    tool: publicToolName(tool),
+    title: options.title || publicToolName(tool),
     summary: options.summary || "",
     surface: tool.startsWith("clinqy_")
       ? "native"
@@ -277,7 +291,7 @@ async function record(tool, toolArgs, options = {}) {
     ...(evidence.length > 0 ? { evidence } : {}),
   });
 
-  console.log(`  ${readOnly ? "·" : "!"} ${tool}`);
+  console.log(`  ${readOnly ? "·" : "!"} ${publicToolName(tool)}`);
   return result;
 }
 
@@ -307,7 +321,7 @@ function closeChild() {
 }
 
 try {
-  console.log(`Witness recorder · ${args.url}`);
+  console.log(`Vouch recorder · ${args.url}`);
   console.log(`  MCP ${mcpPath}`);
 
   await rpc(
@@ -315,7 +329,7 @@ try {
     {
       protocolVersion: "2025-06-18",
       capabilities: {},
-      clientInfo: { name: "witness-recorder", version: "0.1.0" },
+      clientInfo: { name: "vouch-recorder", version: "0.1.0" },
     },
     20_000
   );
@@ -333,14 +347,16 @@ try {
     {
       title: "Discover the browser session",
       summary:
-        "Browsy listed the open tabs. The recorder kept the id of the first tab so every later event points at the same session.",
+        "The browser surface listed the open tabs. The recorder kept the id of the first tab so every later event points at the same session.",
       meta: "read-only · tab inventory",
     }
   );
 
   const tabs = parseTabList(tabsResult.text);
   if (tabs.length === 0) {
-    throw new Error("Browsy returned no tabs. Open Chrome with the extension first.");
+    throw new Error(
+      "The browser surface returned no tabs. Open Chrome with the extension first."
+    );
   }
   let tabId = tabs[0].id;
   if (tabId == null) throw new Error("The first tab did not include an id.");
@@ -351,7 +367,7 @@ try {
     {
       readOnly: false,
       title: "Open the target URL",
-      summary: `Browsy opened ${args.url} in a focused tab. This is the only URL the recorder opened.`,
+      summary: `The browser surface opened ${args.url} in a focused tab. This is the only URL the recorder opened.`,
       target: args.url,
       meta: "confirmed mutation · target opened",
     }
@@ -400,7 +416,7 @@ try {
     {
       title: "Capture the viewport",
       summary:
-        "Browsy captured the visible viewport as downscaled JPEG evidence. The image is stored beside this run.",
+        "The browser surface captured the visible viewport as downscaled JPEG evidence. The image is stored beside this run.",
       target: args.url,
       meta: "read-only · image/jpeg",
     }
@@ -414,7 +430,7 @@ try {
         {
           title: "Native context check",
           summary:
-            "Clinqy looked at the current screen. The raw observation is withheld by policy; only the fact that it happened is recorded.",
+            "The native runtime looked at the current screen. The raw observation is withheld by policy; only the fact that it happened is recorded.",
           redact:
             "Native observation captured. Raw screen output withheld by the recorder's privacy policy.",
           nativeRedaction: true,
@@ -425,21 +441,21 @@ try {
     } catch (error) {
       addEvent({
         at: at(),
-        tool: "clinqy_look",
+        tool: "native_look",
         title: "Native context check",
         summary:
-          "Clinqy was unavailable, so the native observation was skipped. The web record is unaffected.",
+          "The native runtime was unavailable, so the observation was skipped. The browser record is unaffected.",
         surface: "native",
         readOnly: true,
         status: "blocked",
         args: { mode: "page" },
         result: {
           excerpt:
-            error instanceof Error ? error.message : "Clinqy did not answer.",
+            error instanceof Error ? error.message : "The native runtime did not answer.",
           meta: "blocked · optional sensor",
         },
       });
-      console.log("  × clinqy_look (blocked)");
+      console.log("  × native_look (blocked)");
     }
   }
 
@@ -487,7 +503,7 @@ try {
     startedAt: startedAt.toISOString(),
     durationMs: Math.max(0, finishedAt.getTime() - startedAt.getTime()),
     mode: "live",
-    agent: "Job Pilot MCP · Browsy + Clinqy",
+    agent: "Vouch local bridge",
     tags: ["recorded", "local", args.native ? "web + native" : "web"],
     events: sealedEvents,
     integrity: {

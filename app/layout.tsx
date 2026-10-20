@@ -1,11 +1,23 @@
 import type { Metadata } from "next";
-import { JetBrains_Mono, Space_Grotesk } from "next/font/google";
+import {
+  Instrument_Sans,
+  Instrument_Serif,
+  JetBrains_Mono,
+} from "next/font/google";
 import "./globals.css";
 import Shell from "@/components/Shell";
 
-const sans = Space_Grotesk({
+const sans = Instrument_Sans({
   subsets: ["latin"],
   variable: "--font-sans",
+  display: "swap",
+});
+
+const serif = Instrument_Serif({
+  subsets: ["latin"],
+  weight: "400",
+  style: ["normal", "italic"],
+  variable: "--font-serif",
   display: "swap",
 });
 
@@ -16,37 +28,39 @@ const mono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://witness-chaitu0608.vercel.app"),
+  metadataBase: new URL("https://vouch-chaitu0608.vercel.app"),
   title: {
-    default: "Witness — the flight recorder for AI agents",
-    template: "%s · Witness",
+    default: "Vouch — receipts for agent work",
+    template: "%s · Vouch",
   },
   description:
-    "Browsy captures the web. Clinqy captures the Mac. Witness turns both into a verifiable, tamper-evident run you can replay, audit, and share.",
+    "Vouch records a run across the browser and the Mac, seals every event into a SHA-256 chain, and gives you an evidence room you can replay, verify, and share.",
   keywords: [
     "AI agents",
     "agent observability",
+    "agent receipts",
     "browser automation",
-    "Browsy",
-    "Clinqy",
+    "native automation",
     "MCP",
     "flight recorder",
+    "evidence",
+    "tamper-evident",
   ],
   authors: [{ name: "Chaitu" }],
   alternates: { canonical: "/" },
   openGraph: {
-    title: "Witness — the flight recorder for AI agents",
+    title: "Vouch — receipts for agent work",
     description:
-      "Cross-surface agent runs with receipts. Browsy + Clinqy, sealed with a SHA-256 chain.",
+      "Cross-surface agent runs with receipts. Browser + native, sealed with a SHA-256 chain.",
     type: "website",
     url: "/",
-    siteName: "Witness",
+    siteName: "Vouch",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Witness — the flight recorder for AI agents",
+    title: "Vouch — receipts for agent work",
     description:
-      "Cross-surface agent runs with receipts. Browsy + Clinqy, sealed with a SHA-256 chain.",
+      "Cross-surface agent runs with receipts. Browser + native, sealed with a SHA-256 chain.",
   },
 };
 
@@ -54,7 +68,10 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={`${sans.variable} ${mono.variable}`}>
+    <html
+      lang="en"
+      className={`${sans.variable} ${serif.variable} ${mono.variable}`}
+    >
       <body className="font-sans">
         <Shell>{children}</Shell>
       </body>

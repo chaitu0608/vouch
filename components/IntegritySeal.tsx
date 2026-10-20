@@ -36,12 +36,12 @@ export default function IntegritySeal({
   if (compact) {
     return (
       <span
-        className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 font-mono text-[9px] uppercase tracking-[0.14em] ${
+        className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 font-mono text-[8px] uppercase tracking-[0.12em] ${
           state === "ok"
-            ? "border-lime/25 bg-lime/[0.06] text-lime"
+            ? "border-mint/25 bg-mint/[0.06] text-mint"
             : state === "bad"
-              ? "border-ember/25 bg-ember/[0.06] text-ember"
-              : "border-white/10 text-mist"
+              ? "border-ember/25 bg-ember/[0.05] text-ember"
+              : "border-line text-mist"
         }`}
       >
         {state === "checking" ? (
@@ -63,26 +63,26 @@ export default function IntegritySeal({
   }
 
   return (
-    <div className="flex flex-wrap items-center gap-3 rounded-xl border border-white/[0.07] bg-white/[0.02] px-4 py-3">
+    <div className="flex flex-wrap items-center gap-3 rounded-lg border border-line bg-paper-2/40 px-4 py-3">
       <div
-        className={`flex h-8 w-8 items-center justify-center rounded-lg ${
+        className={`flex h-8 w-8 items-center justify-center rounded-md ${
           state === "ok"
-            ? "bg-lime/10 text-lime"
+            ? "bg-mint/[0.08] text-mint"
             : state === "bad"
-              ? "bg-ember/10 text-ember"
-              : "bg-white/[0.05] text-mist"
+              ? "bg-ember/[0.08] text-ember"
+              : "bg-paper-3 text-mist"
         }`}
       >
         {state === "checking" ? (
-          <Loader2 size={16} className="animate-spin" />
+          <Loader2 size={15} className="animate-spin" />
         ) : state === "ok" ? (
-          <ShieldCheck size={16} />
+          <ShieldCheck size={15} />
         ) : (
-          <ShieldAlert size={16} />
+          <ShieldAlert size={15} />
         )}
       </div>
       <div className="min-w-0">
-        <div className="text-xs font-medium text-chalk">
+        <div className="text-xs font-medium text-ink">
           {state === "ok"
             ? run.integrity.manifest
               ? "Run sealed"
@@ -91,13 +91,13 @@ export default function IntegritySeal({
               ? "Seal could not be verified"
               : "Verifying seal…"}
         </div>
-        <div className="mt-0.5 truncate font-mono text-[9px] uppercase tracking-[0.1em] text-mist/70">
+        <div className="mt-0.5 truncate font-mono text-[8px] uppercase tracking-[0.08em] text-mist">
           SHA-256 · {run.events.length} events
           {run.integrity.manifest ? " + manifest" : ""} · head{" "}
           {run.integrity?.head?.slice(0, 10) ?? "missing"}…
         </div>
         {state === "bad" && brokenAt && (
-          <div className="mt-0.5 font-mono text-[9px] uppercase tracking-[0.1em] text-ember/80">
+          <div className="mt-0.5 font-mono text-[8px] uppercase tracking-[0.08em] text-ember">
             failed at {brokenAt}
           </div>
         )}
@@ -105,7 +105,7 @@ export default function IntegritySeal({
       <button
         type="button"
         onClick={() => void check()}
-        className="ml-auto inline-flex items-center gap-1.5 rounded-lg border border-white/10 px-2.5 py-1.5 font-mono text-[9px] uppercase tracking-[0.12em] text-mist transition-colors hover:border-white/20 hover:text-chalk"
+        className="ml-auto inline-flex items-center gap-1.5 rounded border border-line px-2.5 py-1.5 font-mono text-[8px] uppercase tracking-[0.1em] text-mist transition-colors hover:border-line-strong hover:text-ink"
       >
         <RefreshCw size={10} /> Re-check
       </button>

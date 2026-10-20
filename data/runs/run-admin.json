@@ -2,7 +2,7 @@
   "id": "run-admin",
   "title": "Prove an unauthenticated admin endpoint",
   "task": "Open a local vibe-coded API in a real browser, inspect the admin surface anonymously, and capture evidence — without sending a single mutation.",
-  "summary": "Browsy discovered the browser session, opened the app, read the landing page, then requested /api/admin/users with no credentials. The endpoint returned the seeded user record with HTTP 200. Clinqy ran a native context check; its raw screen output was withheld by the privacy filter before the run was sealed.",
+  "summary": "The recorder discovered the browser session, opened the app, read the landing page, then requested /api/admin/users with no credentials. The endpoint returned the seeded user record with HTTP 200. The native runtime checked the active screen; its raw output was withheld by the privacy filter before the run was sealed.",
   "verdict": {
     "label": "Exposure confirmed",
     "detail": "GET /api/admin/users returned 1 user record with HTTP 200 and no authorization header.",
@@ -11,7 +11,7 @@
   "startedAt": "2026-10-20T15:37:10+05:30",
   "durationMs": 21240,
   "mode": "live",
-  "agent": "Job Pilot MCP · Chrome for Testing",
+  "agent": "Vouch local bridge · Chrome for Testing",
   "tags": [
     "security",
     "session-native",
@@ -22,7 +22,7 @@
       "id": "evt_01",
       "tool": "browser_list_tabs",
       "title": "Discover the browser session",
-      "summary": "Browsy found one disposable Chrome tab. This is the only tab the recorder touched.",
+      "summary": "Browser found one disposable Chrome tab. This is the only tab the recorder touched.",
       "surface": "web",
       "readOnly": true,
       "status": "ok",
@@ -33,7 +33,7 @@
       },
       "at": "2026-10-20T10:07:10.000Z",
       "prevHash": "GENESIS",
-      "hash": "b9156bf93f6b04d69581692f368d481e243a42e5dd6c4083fb832986b9e93263"
+      "hash": "40439c165550812429ce30da0f691e57a15e4d8fde6ab11d4f717ce38e3e96ab"
     },
     {
       "id": "evt_02",
@@ -54,8 +54,8 @@
         "meta": "tab 298708309"
       },
       "at": "2026-10-20T10:07:11.420Z",
-      "prevHash": "b9156bf93f6b04d69581692f368d481e243a42e5dd6c4083fb832986b9e93263",
-      "hash": "8349196d040b53bd185068370b7eff512fa2adb861f85b76b0ea76802bdd673f"
+      "prevHash": "40439c165550812429ce30da0f691e57a15e4d8fde6ab11d4f717ce38e3e96ab",
+      "hash": "5da97877d8e6d5c60e010c069daae7acf28738c1aaa789d9d83303d1b903a346"
     },
     {
       "id": "evt_03",
@@ -82,8 +82,8 @@
         }
       ],
       "at": "2026-10-20T10:07:13.180Z",
-      "prevHash": "8349196d040b53bd185068370b7eff512fa2adb861f85b76b0ea76802bdd673f",
-      "hash": "1ed3543466fa3de5bf1c0648b7582a2390e57a35e0a5204683ff8094986a261b"
+      "prevHash": "5da97877d8e6d5c60e010c069daae7acf28738c1aaa789d9d83303d1b903a346",
+      "hash": "7a2c5d2ea85bfbdbfa3d9b7f84bbf46b9169cdadf53e8abea70373d4cf814eb5"
     },
     {
       "id": "evt_04",
@@ -106,12 +106,12 @@
           "kind": "screenshot",
           "label": "Landing page",
           "src": "/evidence/admin-home.jpg",
-          "note": "Browsy · viewport capture"
+          "note": "Browser · viewport capture"
         }
       ],
       "at": "2026-10-20T10:07:14.360Z",
-      "prevHash": "1ed3543466fa3de5bf1c0648b7582a2390e57a35e0a5204683ff8094986a261b",
-      "hash": "dffb44ce559035b4cc64f66429230c9650dea6712d79267860f5d39262bb3e8f"
+      "prevHash": "7a2c5d2ea85bfbdbfa3d9b7f84bbf46b9169cdadf53e8abea70373d4cf814eb5",
+      "hash": "0de5427758547b909647d8fe1edf2e9627d0559d1e04c41a81d757bf1076ab90"
     },
     {
       "id": "evt_05",
@@ -132,8 +132,8 @@
         "meta": "navigation accepted"
       },
       "at": "2026-10-20T10:07:16.120Z",
-      "prevHash": "dffb44ce559035b4cc64f66429230c9650dea6712d79267860f5d39262bb3e8f",
-      "hash": "7a67419cf05b38a10e00c01cf9470cfc2299866007586e5b4b571f0e367efce3"
+      "prevHash": "0de5427758547b909647d8fe1edf2e9627d0559d1e04c41a81d757bf1076ab90",
+      "hash": "299c449a70a30779dabf2ccac5b9012c6bc960da812f26c9e7b44b8cfde8e507"
     },
     {
       "id": "evt_06",
@@ -152,8 +152,8 @@
         "meta": "800 ms"
       },
       "at": "2026-10-20T10:07:17.480Z",
-      "prevHash": "7a67419cf05b38a10e00c01cf9470cfc2299866007586e5b4b571f0e367efce3",
-      "hash": "c62ecd0915195ab524500ed4b31d3b06e183224e6389ff019436b511e80a306c"
+      "prevHash": "299c449a70a30779dabf2ccac5b9012c6bc960da812f26c9e7b44b8cfde8e507",
+      "hash": "bfef609010e35390d0a384a3e19225134ba1f0897098e6b67164fa26a87af8f3"
     },
     {
       "id": "evt_07",
@@ -180,8 +180,8 @@
         }
       ],
       "at": "2026-10-20T10:07:18.620Z",
-      "prevHash": "c62ecd0915195ab524500ed4b31d3b06e183224e6389ff019436b511e80a306c",
-      "hash": "bfbdc782dd2d4b92ac45de253142ba624b6f578cb4e9d2e5be2f43aa54f75fa4"
+      "prevHash": "bfef609010e35390d0a384a3e19225134ba1f0897098e6b67164fa26a87af8f3",
+      "hash": "d88592d1e4aead6ba0bc916b8ba98404191fb3b1136233326ce67945ac3dd50c"
     },
     {
       "id": "evt_08",
@@ -204,18 +204,18 @@
           "kind": "screenshot",
           "label": "Admin response · 200 OK",
           "src": "/evidence/admin-route.jpg",
-          "note": "Browsy · viewport capture · unauthenticated"
+          "note": "Browser · viewport capture · unauthenticated"
         }
       ],
       "at": "2026-10-20T10:07:20.040Z",
-      "prevHash": "bfbdc782dd2d4b92ac45de253142ba624b6f578cb4e9d2e5be2f43aa54f75fa4",
-      "hash": "cd3b5d75f668d52b8f2d8c3bedf1a17f4f8ca2af506a18a2f75e23430eaa928b"
+      "prevHash": "d88592d1e4aead6ba0bc916b8ba98404191fb3b1136233326ce67945ac3dd50c",
+      "hash": "37cd45af95877d71b0ea9914a2e14f24ca15d2fdad91029646bc5a0fa5a22e7f"
     },
     {
       "id": "evt_09",
-      "tool": "clinqy_look",
+      "tool": "native_look",
       "title": "Native context check",
-      "summary": "Clinqy was asked to read the active screen. The raw observation was withheld by the recorder's native-screen policy before sealing.",
+      "summary": "The native runtime was asked to read the active screen. The raw observation was withheld by the recorder's native-screen policy before sealing.",
       "surface": "native",
       "readOnly": true,
       "status": "redacted",
@@ -229,15 +229,15 @@
       "evidence": [
         {
           "kind": "screen",
-          "label": "Clinqy · native observation",
+          "label": "Native · screen observation",
           "redacted": true,
           "content": "Raw native captures stay local by default. This run proves the check executed; it does not publish unrelated desktop content.",
           "note": "redaction policy · native-screen"
         }
       ],
       "at": "2026-10-20T10:07:22.180Z",
-      "prevHash": "cd3b5d75f668d52b8f2d8c3bedf1a17f4f8ca2af506a18a2f75e23430eaa928b",
-      "hash": "0140c8117e0b55f614133e0fc4377e0a32889ae9876186e52ffe05aa47e24cd4"
+      "prevHash": "37cd45af95877d71b0ea9914a2e14f24ca15d2fdad91029646bc5a0fa5a22e7f",
+      "hash": "fcc5f958c32b5f6bf029faeefded1c5c494dd8c5d46342e6ed616951e63d5286"
     },
     {
       "id": "evt_10",
@@ -256,14 +256,14 @@
         "meta": "tab released"
       },
       "at": "2026-10-20T10:07:24.760Z",
-      "prevHash": "0140c8117e0b55f614133e0fc4377e0a32889ae9876186e52ffe05aa47e24cd4",
-      "hash": "693b25b94d769700fddc3be06a8419c87190ab17014967eaaabe91f19637fa4b"
+      "prevHash": "fcc5f958c32b5f6bf029faeefded1c5c494dd8c5d46342e6ed616951e63d5286",
+      "hash": "67d95c82bd7b25560f1c762084bdc9b548704f40fcc470780c0c03d14af4036a"
     }
   ],
   "integrity": {
     "algorithm": "SHA-256",
-    "head": "693b25b94d769700fddc3be06a8419c87190ab17014967eaaabe91f19637fa4b",
+    "head": "67d95c82bd7b25560f1c762084bdc9b548704f40fcc470780c0c03d14af4036a",
     "events": 10,
-    "manifest": "b84edec72327475065ce3c7d400abce0866404ca4789463250a239837d753728"
+    "manifest": "9baecd61a0f74f9e4a989b12eabff415c1c6c3a15077e7a43c0d3fd0765a35d2"
   }
 }

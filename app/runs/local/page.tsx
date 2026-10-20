@@ -3,7 +3,7 @@ import ImportedRun from "@/components/ImportedRun";
 export const metadata = {
   title: "Imported run",
   description:
-    "A Witness run loaded from a local JSON file. It never leaves this browser.",
+    "A Vouch run loaded from a local JSON file. It stays in this browser.",
 };
 
 export default function LocalRunPage() {

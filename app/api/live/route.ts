@@ -4,17 +4,13 @@ export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
 type LocalState = {
-  connections?: {
-    localBrowser?: { connected?: boolean };
-    extension?: { connected?: boolean };
-    clinqy?: { connected?: boolean };
-  };
+  connections?: Record<string, { connected?: boolean } | undefined>;
 };
 
 /**
- * The only network call the viewer makes: ask the local Job Pilot server
- * whether the two engines are alive. On Vercel this fails closed — 127.0.0.1
- * is the visitor's machine, not the deployment's.
+ * The only network call the viewer makes: ask the local bridge whether the
+ * two surfaces are alive. On Vercel this fails closed — 127.0.0.1 is the
+ * visitor's machine, not the deployment's.
  */
 export async function GET() {
   try {
@@ -28,26 +24,28 @@ export async function GET() {
     }
 
     const state = (await response.json()) as LocalState;
-    const browsy = Boolean(
-      state.connections?.localBrowser?.connected ||
-        state.connections?.extension?.connected
+    const connections = state.connections ?? {};
+    const browser = Boolean(
+      connections.localBrowser?.connected || connections.extension?.connected
     );
-    const clinqy = Boolean(state.connections?.clinqy?.connected);
+    const native = Object.entries(connections)
+      .filter(([key]) => key !== "localBrowser" && key !== "extension")
+      .some(([, value]) => Boolean(value?.connected));
 
     return NextResponse.json({
       live: true,
-      browsy,
-      clinqy,
+      browser,
+      native,
       checkedAt: new Date().toISOString(),
     });
   } catch {
     return NextResponse.json({
       live: false,
-      browsy: false,
-      clinqy: false,
+      browser: false,
+      native: false,
       checkedAt: new Date().toISOString(),
       error:
-        "Local runtime not reachable from this deployment. That is expected on a static host.",
+        "Local bridge not reachable from this deployment. That is expected on a static host.",
     });
   }
 }

@@ -1,84 +1,121 @@
-# Witness
+# Vouch
 
-**The flight recorder for AI agents.** Browsy captures the web. Clinqy captures the Mac. Witness turns both into a verifiable run — every action, snapshot, and screen check, sealed with a SHA-256 hash chain.
+**Agent work, with receipts.**
 
-**Live:** [witness-chaitu0608.vercel.app](https://witness-chaitu0608.vercel.app)  
-**Source:** [github.com/chaitu0608/witness](https://github.com/chaitu0608/witness)
+Vouch is a local-first flight recorder for agent work across the browser and the
+Mac. It records an explicit sequence of tool calls, captures the evidence each
+call produced, seals the run into a SHA-256 chain, and renders the result as a
+reviewable artifact.
 
-The hosted app is an **evidence room**: a renderer for sealed JSON runs. The recorder runs locally, next to Chrome and the Mac. There is no backend, no account, and no upload endpoint.
+- **Live:** [vouch-chaitu0608.vercel.app](https://vouch-chaitu0608.vercel.app)
+- **Source:** [github.com/chaitu0608/vouch](https://github.com/chaitu0608/vouch)
 
----
+> Browser agents stop at the tab. Desktop agents stop at the app. Vouch records
+> both, with the receipt.
 
-## Why
+## Why this exists
 
-Your agent can open a tab, read a page, click a button, and ask a native app to look at the screen. Most of that work is invisible to cloud tracing. Chat logs show a story; they do not show what the browser actually rendered or what the Mac actually displayed.
+A prompt and a tool name are not a record of what happened. The consequential
+part — the logged-in tab, the native window, the approval before a submit — is
+exactly what ordinary observability never sees.
 
-Witness records the **cross-surface** part:
+A screenshot is not a sequence. A chat transcript is not an artifact. Vouch
+turns the run itself into the durable object:
 
-- the exact Browsy tool call and its arguments,
-- the result, with screenshots and page snapshots as evidence,
-- whether the action was read-only, confirmed, or explicitly approved,
-- one redacted Clinqy observation when native context matters,
-- **and a hash chain over every event**, plus a manifest seal over the run itself.
+- every tool call, with arguments and a result excerpt;
+- the surface it happened on: browser or native;
+- the evidence it produced, including screenshots and redacted native markers;
+- the approval state beside the action;
+- a hash chain and a manifest that fail if the file is edited.
 
-Anyone can replay the run and re-verify the chain in the browser.
+## What is in the box
 
-## What is real here
+### Two surfaces
 
-| Run | Mode | What it is |
+| Surface | Tools | Runtime |
 | --- | --- | --- |
-| `run-admin` | **live** | A real Browsy capture against a synthetic vulnerable corpus app. The screenshots are real evidence. A Clinqy look ran, but its raw output is redacted because it observed unrelated private apps. |
-| `run-supabase` | **sample** | Synthetic events for an RLS / membership qualification flow. Clearly labeled in the UI. |
-| `run-payout` | **sample** | Synthetic events for a cross-app finance check. Clearly labeled in the UI. |
+| Browser | 17 | Real Chrome session with the extension |
+| Native | 4 | macOS accessibility / OCR runtime |
+| **Total** | **21** | One local MCP bridge |
 
-The live run proves an anonymous `GET /api/admin/users` returned a user record with `200 OK`. It is a small, deliberately safe corpus app — not a production endpoint.
+The browser surface sees the actual tab: tabs, DOM snapshots, screenshots,
+navigation, clicks, typing, keys, scrolling, and ref release. No headless clone
+and no separate login state.
 
-## Architecture
+The native surface sees the Mac: screen observation, runtime stats, a gated
+native task, and one fixed handoff. Raw screen output is always replaced by a
+redaction marker before it reaches the artifact.
 
+### One artifact
+
+```json
+{
+  "id": "run-admin",
+  "mode": "live",
+  "events": [
+    {
+      "tool": "browser_snapshot",
+      "surface": "web",
+      "readOnly": true,
+      "status": "ok",
+      "args": { "tabId": 42 },
+      "evidence": [{ "kind": "screenshot", "src": "/evidence/admin-route.jpg" }],
+      "prevHash": "GENESIS",
+      "hash": "…"
+    }
+  ],
+  "integrity": {
+    "algorithm": "SHA-256",
+    "head": "…",
+    "events": 10,
+    "manifest": "…"
+  }
+}
 ```
-Job Pilot MCP server (stdio JSON-RPC)
-  ├── Browsy    17 tools → Chrome extension → your real tab
-  ├── Clinqy     4 tools → native macOS app
-  └── 25 tools          → jobs / memory / workflows (local SQLite)
-          │
-          │   scripts/record-run.mjs
-          │   canonicalize + SHA-256 chain
-          ▼
-   data/runs/*.json  ── export ──▶  Witness viewer (Vercel)
-                                          │
-                                    verify in browser
-                                    (lib/chain.ts)
-```
 
-- **Recorder**: Node, local only. Speaks MCP over stdio to the Job Pilot server.
-- **Viewer**: Next.js 15 + React 19 + Tailwind. Static content plus a client-side import.
-- **Storage**: bundled JSON for published runs; `localStorage` for imported runs. No database.
+The viewer is static. It reads bundled JSON or a file you drop in. The import
+never leaves the browser; it uses the File API and `localStorage`.
 
-## Quickstart
+## Quick start
 
 ```bash
 npm install
 npm run dev
-# http://localhost:3000
 ```
 
-The three bundled runs are rendered from `data/runs/*.json`. `npm run dev` does not need Job Pilot, Chrome, or Clinqy.
+Open `http://localhost:3000`. The three bundled runs are available without a
+local bridge, Chrome, or the native runtime.
+
+### Verify a run offline
 
 ```bash
-npm run seal     # re-seal every run in data/runs
-npm run build    # prebuild runs seal, then next build
+npm run verify -- data/runs/run-admin.json
+# ok · run-admin.json · 10 events · chain intact · manifest matches
 ```
 
-## Record a real run
+`npm run verify:all` checks every bundled run. The same algorithm runs in the
+browser in `lib/chain.ts`.
 
-Prerequisites:
+### Diff two runs
 
-- Job Pilot at `~/jobpilot` with its local server (`127.0.0.1:8787`),
-- Chrome running with the Job Pilot extension loaded,
-- Clinqy installed if you want the optional native check,
-- a disposable browser profile and a page you control.
+```bash
+npm run diff -- data/runs/run-a.json data/runs/run-b.json
+npm run diff -- data/runs/run-a.json data/runs/run-b.json --fail
+```
 
-From this repo:
+The diff walks the run metadata and every event: title, surface, arguments,
+result excerpt, evidence, approval state, and status. Use `--fail` in CI when a
+re-record is expected to be identical.
+
+### Record a run
+
+You need:
+
+1. The local MCP bridge running.
+2. Chrome with the browser extension loaded.
+3. The native runtime, only if you want the optional screen observation.
+
+Then:
 
 ```bash
 node scripts/record-run.mjs \
@@ -89,100 +126,127 @@ node scripts/record-run.mjs \
   --yes
 ```
 
-Then:
+`--yes` acknowledges the two confirmed browser mutations: opening the tab and
+releasing the refs. There is no click, type, submit, send, or arbitrary native
+task in the recorder.
+
+Set `VOUCH_MCP` to point at the bridge entry point if it is not in the default
+local location.
+
+### Seal and publish
 
 ```bash
-npm run seal
-npm run dev
+npm run seal   # recompute the chain and manifest for every JSON file
+npm run build  # prebuild runs seal automatically
 ```
 
-Open the run, inspect the timeline, and use **Export JSON** to share it. To view someone else's export, use **Capture → Import**: the file is read with the File API and stored in `localStorage`. It is never uploaded.
+Commit the sealed JSON and any evidence images under `public/evidence/`. The
+static pages are generated at build time.
 
-Set `JOBPILOT_MCP` if the server is not at `../jobpilot/server/mcp.js`.
+## Architecture
 
-### What the recorder touches
+```text
+local bridge (MCP, stdio)
+  ├── browser surface ── 17 tools ──► Chrome extension ──► your real tab
+  └── native surface  ──  4 tools ──► macOS runtime
+             │
+             ▼
+      Vouch recorder
+      (explicit sequence)
+             │
+             ▼
+      data/runs/*.json
+      SHA-256 chain + manifest
+             │
+             ▼
+      static viewer on Vercel
+      replay · inspect · verify · export
+```
 
-| Tool | Safety | Purpose |
-| --- | --- | --- |
-| `browser_list_tabs` | read-only | find the disposable tab |
-| `browser_open_tab` | confirm | open exactly the URL you passed |
-| `browser_wait` | read-only | let the page settle |
-| `browser_snapshot` | read-only | DOM evidence |
-| `browser_screenshot` | read-only | viewport evidence |
-| `clinqy_look` (opt-in) | read-only | one native observation, stored redacted |
-| `browser_release` | confirm | clear refs; the tab stays open |
-
-It does **not** call `browser_click`, `browser_type`, `browser_press_key`, `clinqy_run`, `jobpilot_apply`, or any submit/send/pay/delete path. It refuses to open a tab without `--yes`, and it rejects non-http(s) URLs.
-
-## The 21 engine tools
-
-**Browsy (17)** — `browser_list_tabs`, `browser_snapshot`, `browser_get_html`, `browser_screenshot`, `browser_wait`, `browser_open_tab`, `browser_focus_tab`, `browser_close_tab`, `browser_navigate`, `browser_back`, `browser_forward`, `browser_reload`, `browser_click`, `browser_type`, `browser_press_key`, `browser_scroll`, `browser_release`.
-
-**Clinqy (4)** — `clinqy_look`, `clinqy_stats`, `clinqy_run`, `clinqy_open`.
-
-The full MCP server exposes **46 tools**: those 21 plus 17 job tools, 3 memory tools, and 5 workflow tools. The Engines page maps all 21 engine tools and the groups behind the rest.
+The bridge enforces its own read/confirm/approve gates. The recorder stores the
+approval state; it is not an approval mechanism.
 
 ## Safety model
 
-- **Read** — no state change. Snapshots, HTML, screenshots, waits, tab lists, native observations.
-- **Confirm** — a browser mutation. Opening tabs, navigation, typing, keys, scroll, release, Clinqy handoffs.
-- **Approve** — a submit/send/pay/delete click or a whole-Mac task. Refused without explicit human approval.
+Every tool has one of three classes:
 
-Witness records the approval state, but it is not an approval mechanism. It never submits an application or sends a message on its own.
+- **Read-only** — page structure, screenshot, tab inventory, native observation,
+  runtime stats.
+- **Confirm** — opening or navigating a tab, typing, pressing a key, scrolling,
+  releasing refs, fixed native handoff.
+- **Approve** — submit/send/pay/delete clicks, or a whole-Mac native task.
 
-## Privacy
+The shipped recorder only calls read-only tools plus two confirmed browser
+mutations (`open`, `release`). It has no submit path, no message sender, and no
+arbitrary native task.
 
-- The deployed site has **no upload endpoint**. Imports are client-side.
-- Published native observations are **redacted**: the run records that Clinqy looked, not what it saw.
-- The only network call the viewer can make is `GET /api/live`, which asks `127.0.0.1:8787` for engine status. On Vercel this correctly fails closed; locally it is a bridge.
-- The live capture used a disposable Chrome profile and a synthetic corpus app.
+Additional boundaries:
 
-## Verify the chain
+- raw native observations are **redacted before sealing**;
+- runs are labeled `live`, `sample`, or `imported`;
+- the hosted viewer cannot execute anything;
+- `/api/live` fails closed on Vercel because `127.0.0.1` is the visitor's
+  machine, not the deployment's;
+- there is no account, database, upload endpoint, or telemetry.
 
-Each event commits to the previous hash, and the run manifest commits to the title, verdict, mode, tags, and event head:
+## Scope
 
+Vouch v0.1 is **a recorder, not a proxy**. It drives a known sequence and records
+each call. It does not intercept an arbitrary agent session, choose the next
+tool call, widen a permission, or retry a mutation. That boundary keeps the run
+small enough to read, diff, and trust.
+
+The native surface is optional. If it is unavailable, the browser record is
+unaffected and the run contains a blocked native event only when one was
+requested.
+
+## Bundled runs
+
+| Run | Mode | What it shows |
+| --- | --- | --- |
+| `run-admin` | **live** | A real browser capture against a synthetic vulnerable corpus app, with a redacted native observation. |
+| `run-supabase` | sample | A read-only job qualification across both surfaces. |
+| `run-payout` | sample | A cross-app finance check that finds a mismatch and stops before editing. |
+
+Samples are labeled as samples everywhere. The live run is the one to inspect
+for real evidence.
+
+## Project map
+
+```text
+app/                    Next.js App Router pages and metadata
+components/             viewer, run player, tool atlas, import, UI
+components/bencho/      adapted MIT blocks with attribution
+data/runs/              sealed run JSON
+lib/chain.ts            canonicalization and in-browser verifier
+lib/tools.ts            the 21-tool surface
+public/evidence/        screenshot evidence
+scripts/record-run.mjs  local recorder
+scripts/seal-runs.mjs   chain + manifest sealer
+scripts/verify-run.mjs  offline verifier
+scripts/diff-runs.mjs   event-level run diff
 ```
-event hash    = SHA-256(prevHash + "|" + canonicalize(event))
-manifest hash = SHA-256(canonicalize(run metadata + event head))
-```
 
-`canonicalize` sorts object keys and emits compact JSON. The same algorithm exists in:
+## Design
 
-- `scripts/seal-runs.mjs` (build time),
-- `scripts/record-run.mjs` (capture time),
-- `lib/chain.ts` (browser verification).
+Warm paper, black ink, a single vermilion signal accent. Instrument Sans for the
+interface, Instrument Serif for the display, JetBrains Mono for the evidence.
+The layout is deliberately quiet: the artifact is the loudest thing on the page.
 
-Change one byte in a published event and verification fails at that event. The chain is **tamper-evident**, not a cryptographic signature: it proves the file has not changed since sealing, not who created it.
+Three adapted [Bencho](https://bencho.dev) blocks are used under the MIT license:
+a step rail for run playback, a reviewer checklist, and stacked tool-mix bars.
+Attribution is in [`components/bencho/LICENSE`](components/bencho/LICENSE).
 
 ## Deploy
 
 ```bash
-npm i -g vercel
-vercel --prod
+npx vercel --prod
 ```
 
-No environment variables. The build runs `prebuild` → `seal` → `next build`, so every deployment gets a deterministic chain over the committed runs.
+The viewer is fully static; only `/api/live` is dynamic and it fails closed on a
+hosted deployment. No environment variables are required.
 
-The current deployment lives at [witness-chaitu0608.vercel.app](https://witness-chaitu0608.vercel.app).
+## License
 
-## Repo layout
-
-```
-app/                 routes: overview, runs, engines, capture, api/live
-components/          shell, run player, verifier, atlas, import UI
-data/runs/           sealed run JSON (one live, two sample)
-lib/                 types, chain, tool atlas, run helpers
-public/evidence/     real screenshots used by the live run
-scripts/             seal-runs.mjs, record-run.mjs
-```
-
-## Prior work
-
-Witness follows [Reprove](https://github.com/chaitu0608/reprove), a proof-carrying security scanner with deterministic fixes and a clean-control corpus. The live run was captured against Reprove's synthetic vulnerable API.
-
-## Limits
-
-- This is a local-first prototype, not a hosted agent runtime.
-- A hash chain is integrity, not identity. Signing and key management are future work.
-- The two sample runs are synthetic and labeled as such.
-- Browser evidence is a viewport JPEG plus a DOM excerpt, not a full packet capture.
+Source is available for review and reuse. The bundled run data is synthetic
+except for the live capture; evidence images are from a disposable local corpus.

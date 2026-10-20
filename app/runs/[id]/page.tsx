@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import {
   ArrowLeft,
+  ArrowUpRight,
   Check,
   Clock3,
   Info,
@@ -61,52 +62,54 @@ export default async function RunDetailPage({
       <div className="flex flex-wrap items-center justify-between gap-3">
         <Link
           href="/runs"
-          className="inline-flex items-center gap-1.5 text-xs text-mist hover:text-chalk"
+          className="inline-flex items-center gap-1.5 text-[11px] text-mist transition-colors hover:text-ink"
         >
-          <ArrowLeft size={13} /> All runs
+          <ArrowLeft size={12} /> All runs
         </Link>
-        <span className="font-mono text-[9px] uppercase tracking-[0.14em] text-mist/45">
+        <span className="font-mono text-[8px] uppercase tracking-[0.12em] text-mist/70">
           {run.id}
         </span>
       </div>
 
-      <div className="mt-5 flex flex-wrap items-center gap-2">
-        <ModeBadge mode={run.mode} />
-        <span className="chip">
-          <Clock3 size={10} /> {formatDate(run.startedAt)}
-        </span>
-        <span className="chip">{formatDuration(run.durationMs)}</span>
-        <span className="chip">
-          <Layers3 size={10} /> {events} events
-        </span>
-        {surfaces.map((surface) => (
-          <span key={surface} className="chip">
-            <SurfaceBadge surface={surface} />
+      <div className="mt-6 border-b border-line pb-8">
+        <div className="flex flex-wrap items-center gap-2">
+          <ModeBadge mode={run.mode} />
+          <span className="chip">
+            <Clock3 size={9} /> {formatDate(run.startedAt)}
           </span>
-        ))}
-      </div>
-
-      <h1 className="mt-4 max-w-3xl text-balance text-3xl font-semibold tracking-[-0.045em] text-chalk sm:text-4xl">
-        {run.title}
-      </h1>
-      <p className="mt-3 max-w-3xl text-sm leading-relaxed text-mist">
-        {run.summary}
-      </p>
-
-      <div className="mt-4 flex flex-wrap gap-1.5">
-        {run.tags.map((tag) => (
-          <span
-            key={tag}
-            className="rounded-md border border-white/[0.07] bg-white/[0.02] px-2 py-1 font-mono text-[9px] uppercase tracking-[0.1em] text-mist/60"
-          >
-            {tag}
+          <span className="chip">{formatDuration(run.durationMs)}</span>
+          <span className="chip">
+            <Layers3 size={9} /> {events} events
           </span>
-        ))}
+          {surfaces.map((surface) => (
+            <span key={surface} className="chip">
+              <SurfaceBadge surface={surface} />
+            </span>
+          ))}
+        </div>
+
+        <h1 className="display mt-5 max-w-4xl text-[42px] leading-[0.95] text-ink sm:text-[56px]">
+          {run.title}
+        </h1>
+        <p className="mt-4 max-w-3xl text-[14px] leading-relaxed text-mist">
+          {run.summary}
+        </p>
+
+        <div className="mt-4 flex flex-wrap gap-1.5">
+          {run.tags.map((tag) => (
+            <span
+              key={tag}
+              className="rounded border border-line bg-paper-2/40 px-2 py-1 font-mono text-[8px] uppercase tracking-[0.1em] text-mist"
+            >
+              {tag}
+            </span>
+          ))}
+        </div>
       </div>
 
       {run.mode === "sample" ? (
-        <div className="mt-5 flex items-start gap-2 rounded-xl border border-sky/20 bg-sky/[0.03] p-3 text-xs leading-relaxed text-sky">
-          <Info size={14} className="mt-0.5 shrink-0" />
+        <div className="mt-5 flex items-start gap-2 rounded-lg border border-sky/25 bg-sky/[0.04] p-3.5 text-[11px] leading-relaxed text-sky">
+          <Info size={13} className="mt-0.5 shrink-0" />
           <span>
             <span className="font-medium">Sample run.</span> The events and
             evidence here are synthetic, created to demonstrate the viewer. The
@@ -114,8 +117,8 @@ export default async function RunDetailPage({
           </span>
         </div>
       ) : (
-        <div className="mt-5 flex items-start gap-2 rounded-xl border border-lime/20 bg-lime/[0.03] p-3 text-xs leading-relaxed text-lime">
-          <ShieldCheck size={14} className="mt-0.5 shrink-0" />
+        <div className="mt-5 flex items-start gap-2 rounded-lg border border-mint/25 bg-mint/[0.04] p-3.5 text-[11px] leading-relaxed text-mint">
+          <ShieldCheck size={13} className="mt-0.5 shrink-0" />
           <span>
             <span className="font-medium">Live capture.</span> Recorded against
             a disposable local Chrome session pointed at a synthetic corpus app.
@@ -126,25 +129,30 @@ export default async function RunDetailPage({
 
       <div className="mt-5 grid items-start gap-3 lg:grid-cols-[1.35fr_1fr]">
         <div
-          className={`rounded-2xl border p-5 ${
+          className={`rounded-xl border p-5 ${
             run.verdict.tone === "find"
-              ? "border-ember/25 bg-ember/[0.035]"
+              ? "border-lime/30 bg-lime/[0.035]"
               : run.verdict.tone === "clear"
-                ? "border-lime/25 bg-lime/[0.035]"
-                : "border-sky/20 bg-sky/[0.03]"
+                ? "border-mint/30 bg-mint/[0.035]"
+                : "border-sky/25 bg-sky/[0.03]"
           }`}
         >
-          <p className="eyebrow">Verdict</p>
-          <h2 className="mt-2 text-lg font-semibold tracking-[-0.03em] text-chalk">
+          <div className="flex items-center justify-between gap-3">
+            <p className="eyebrow">Verdict</p>
+            <span className="stamp">
+              {run.verdict.tone === "find" ? "finding" : run.verdict.tone}
+            </span>
+          </div>
+          <h2 className="display mt-3 text-[32px] leading-[0.98] text-ink">
             {run.verdict.label}
           </h2>
-          <p className="mt-1.5 max-w-xl text-[13px] leading-relaxed text-mist">
+          <p className="mt-2 max-w-xl text-[12px] leading-relaxed text-mist">
             {run.verdict.detail}
           </p>
-          <ul className="mt-4 grid gap-2 border-t border-white/[0.07] pt-4 text-[11px] text-mist sm:grid-cols-2">
+          <ul className="mt-4 grid gap-2 border-t border-line pt-4 text-[10px] text-mist sm:grid-cols-2">
             {proofPoints.map((item) => (
               <li key={item} className="flex items-start gap-1.5">
-                <Check size={11} className="mt-0.5 shrink-0 text-lime/80" />
+                <Check size={11} className="mt-0.5 shrink-0 text-lime" />
                 {item}
               </li>
             ))}
@@ -153,7 +161,7 @@ export default async function RunDetailPage({
 
         <div className="panel p-5">
           <p className="eyebrow">Run facts</p>
-          <dl className="mt-3 grid grid-cols-2 gap-x-4 gap-y-3 text-xs">
+          <dl className="mt-4 grid grid-cols-2 gap-x-4 gap-y-3">
             <Fact label="Events" value={String(events)} />
             <Fact label="Mutations" value={String(mutationCount(run))} />
             <Fact label="Evidence" value={String(evidenceCount(run))} />
@@ -163,20 +171,20 @@ export default async function RunDetailPage({
                 run.integrity.manifest ? " + manifest" : ""
               }`}
             />
-            <div className="col-span-2 border-t border-white/[0.06] pt-3">
-              <dt className="font-mono text-[9px] uppercase tracking-[0.12em] text-mist/50">
+            <div className="col-span-2 border-t border-line pt-3">
+              <dt className="font-mono text-[8px] uppercase tracking-[0.12em] text-mist/70">
                 Task
               </dt>
-              <dd className="mt-1 text-[12px] leading-relaxed text-chalk/85">
+              <dd className="mt-1 text-[11px] leading-relaxed text-ink/85">
                 {run.task}
               </dd>
             </div>
             <div className="col-span-2">
-              <dt className="font-mono text-[9px] uppercase tracking-[0.12em] text-mist/50">
+              <dt className="font-mono text-[8px] uppercase tracking-[0.12em] text-mist/70">
                 Agent
               </dt>
-              <dd className="mt-1 flex items-center gap-1.5 text-[12px] text-chalk/85">
-                <LockKeyhole size={11} className="text-lime/70" />
+              <dd className="mt-1 flex items-center gap-1.5 text-[11px] text-ink/85">
+                <LockKeyhole size={10} className="text-lime" />
                 {run.agent ?? "Unknown"}
               </dd>
             </div>
@@ -186,24 +194,30 @@ export default async function RunDetailPage({
 
       <RunPlayer run={run} />
 
-      <div className="mt-10 flex flex-col items-start justify-between gap-3 border-t border-white/[0.06] pt-5 text-xs text-mist sm:flex-row sm:items-center">
+      <div className="mt-10 flex flex-col items-start justify-between gap-3 border-t border-line pt-5 text-[11px] text-mist sm:flex-row sm:items-center">
         <p>
           Run seal:{" "}
-          <span className="font-mono text-[10px] text-chalk/70">
+          <span className="font-mono text-[9px] text-ink">
             {run.integrity.algorithm}
           </span>{" "}
           · head{" "}
-          <span className="font-mono text-[10px] text-chalk/70">
+          <span className="font-mono text-[9px] text-ink">
             {run.integrity.head.slice(0, 16)}…
           </span>
           {run.integrity.manifest ? " · manifest included" : ""}
         </p>
         <div className="flex gap-4">
-          <Link href="/engines" className="hover:text-chalk">
-            Tool atlas
+          <Link
+            href="/engines"
+            className="inline-flex items-center gap-1 transition-colors hover:text-ink"
+          >
+            Tool atlas <ArrowUpRight size={11} />
           </Link>
-          <Link href="/capture" className="hover:text-chalk">
-            Import another run
+          <Link
+            href="/capture"
+            className="inline-flex items-center gap-1 transition-colors hover:text-ink"
+          >
+            Import another run <ArrowUpRight size={11} />
           </Link>
         </div>
       </div>
@@ -214,10 +228,10 @@ export default async function RunDetailPage({
 function Fact({ label, value }: { label: string; value: string }) {
   return (
     <div>
-      <dt className="font-mono text-[9px] uppercase tracking-[0.12em] text-mist/50">
+      <dt className="font-mono text-[8px] uppercase tracking-[0.12em] text-mist/70">
         {label}
       </dt>
-      <dd className="mt-1 font-mono text-[11px] text-chalk/85">{value}</dd>
+      <dd className="mt-1 font-mono text-[10px] text-ink">{value}</dd>
     </div>
   );
 }

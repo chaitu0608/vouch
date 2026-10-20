@@ -19,6 +19,8 @@ import { shortHash } from "@/lib/chain";
 import { ModeBadge, StatusDot, SurfaceBadge } from "./Bits";
 import CopyButton from "./CopyButton";
 import IntegritySeal from "./IntegritySeal";
+import StepRail from "./bencho/StepRail";
+import ReviewChecklist from "./bencho/ReviewChecklist";
 
 const filters = [
   { id: "all", label: "All" },
@@ -59,8 +61,7 @@ export default function RunPlayer({ run }: { run: Run }) {
     run.events.findIndex((event) => event.id === selected?.id)
   );
   const visibleIndex = visible.findIndex((event) => event.id === selected?.id);
-  const progress =
-    visible.length > 0 ? ((visibleIndex + 1) / visible.length) * 100 : 0;
+  const activeIndex = Math.max(0, visibleIndex);
 
   useEffect(() => {
     if (visible.length > 0 && !visible.some((event) => event.id === selectedId)) {
@@ -87,6 +88,7 @@ export default function RunPlayer({ run }: { run: Run }) {
   }, [playing, selectedId, visible]);
 
   function togglePlay() {
+    if (visible.length === 0) return;
     if (!playing && visibleIndex === visible.length - 1) {
       setSelectedId(visible[0]?.id ?? selectedId);
     }
@@ -100,15 +102,23 @@ export default function RunPlayer({ run }: { run: Run }) {
     const url = URL.createObjectURL(blob);
     const anchor = document.createElement("a");
     anchor.href = url;
-    anchor.download = `${run.id}.witness.json`;
+    anchor.download = `${run.id}.vouch.json`;
     anchor.click();
     URL.revokeObjectURL(url);
   }
 
+  const evidenceItems = run.events.reduce(
+    (total, event) => total + (event.evidence?.length ?? 0),
+    0
+  );
+  const snapshotEvents = run.events.filter(
+    (event) => event.tool === "browser_snapshot"
+  ).length;
+
   return (
-    <div className="mt-8 grid gap-5 lg:grid-cols-[minmax(0,355px)_minmax(0,1fr)]">
-      <section className="panel h-fit overflow-hidden lg:sticky lg:top-6">
-        <div className="border-b border-white/[0.06] p-4">
+    <div className="mt-8 grid gap-5 lg:grid-cols-[minmax(0,360px)_minmax(0,1fr)]">
+      <section className="panel h-fit overflow-hidden lg:sticky lg:top-24">
+        <div className="border-b border-line p-4">
           <div className="flex items-center justify-between gap-3">
             <div className="flex items-center gap-2">
               <span className="mono-label">Timeline</span>
@@ -117,18 +127,27 @@ export default function RunPlayer({ run }: { run: Run }) {
             <button
               type="button"
               onClick={togglePlay}
-              className="inline-flex items-center gap-1.5 rounded-lg border border-white/10 bg-white/[0.03] px-2.5 py-1.5 font-mono text-[9px] uppercase tracking-[0.12em] text-chalk transition-colors hover:border-lime/30 hover:text-lime"
+              className="inline-flex items-center gap-1.5 rounded border border-line bg-paper-2/45 px-2.5 py-1.5 font-mono text-[8px] uppercase tracking-[0.1em] text-ink transition-colors hover:border-line-strong hover:text-lime"
             >
               {playing ? <Pause size={10} /> : <Play size={10} />}
               {playing ? "Pause" : "Play run"}
             </button>
           </div>
 
-          <div className="mt-3 h-1 overflow-hidden rounded-full bg-white/[0.06]">
-            <div
-              className="h-full rounded-full bg-lime transition-all duration-500"
-              style={{ width: `${progress}%` }}
-            />
+          <div className="mt-4">
+            {visible.length > 0 ? (
+              <StepRail
+                count={visible.length}
+                at={activeIndex}
+                playing={playing}
+                onPick={(index) => {
+                  setPlaying(false);
+                  setSelectedId(visible[index].id);
+                }}
+              />
+            ) : (
+              <div className="h-2 w-full rounded-full bg-line" />
+            )}
           </div>
 
           <div className="mt-3 flex flex-wrap gap-1.5">
@@ -147,14 +166,14 @@ export default function RunPlayer({ run }: { run: Run }) {
                   key={item.id}
                   type="button"
                   onClick={() => setFilter(item.id)}
-                  className={`inline-flex items-center gap-1.5 rounded-full border px-2 py-1 font-mono text-[9px] uppercase tracking-[0.1em] transition-colors ${
+                  className={`inline-flex items-center gap-1.5 rounded-full border px-2 py-1 font-mono text-[8px] uppercase tracking-[0.1em] transition-colors ${
                     active
-                      ? "border-lime/30 bg-lime/[0.08] text-lime"
-                      : "border-white/10 text-mist hover:border-white/20 hover:text-chalk"
+                      ? "border-lime/30 bg-lime/[0.06] text-lime"
+                      : "border-line text-mist hover:border-line-strong hover:text-ink"
                   }`}
                 >
                   {item.label}
-                  <span className="text-mist/50">{count}</span>
+                  <span className="text-mist/60">{count}</span>
                 </button>
               );
             })}
@@ -173,24 +192,22 @@ export default function RunPlayer({ run }: { run: Run }) {
                   setPlaying(false);
                   setSelectedId(event.id);
                 }}
-                className={`group flex w-full items-start gap-3 rounded-xl px-3 py-3 text-left transition-colors ${
-                  active
-                    ? "bg-white/[0.055]"
-                    : "hover:bg-white/[0.025]"
+                className={`group flex w-full items-start gap-3 rounded-md px-3 py-3 text-left transition-colors ${
+                  active ? "bg-paper-2" : "hover:bg-paper-2/55"
                 }`}
               >
                 <span
-                  className={`mt-1 font-mono text-[9px] ${
-                    active ? "text-lime" : "text-mist/45"
+                  className={`mt-1 font-mono text-[8px] ${
+                    active ? "text-lime" : "text-mist/60"
                   }`}
                 >
                   {String(index + 1).padStart(2, "0")}
                 </span>
                 <span
-                  className={`mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-md ${
+                  className={`mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded border ${
                     event.surface === "native"
-                      ? "bg-lime/[0.08] text-lime"
-                      : "bg-sky/[0.07] text-sky"
+                      ? "border-lime/25 bg-lime/[0.05] text-lime"
+                      : "border-sky/25 bg-sky/[0.05] text-sky"
                   }`}
                 >
                   {event.surface === "native" ? (
@@ -201,18 +218,18 @@ export default function RunPlayer({ run }: { run: Run }) {
                 </span>
                 <span className="min-w-0 flex-1">
                   <span className="flex items-center gap-1.5">
-                    <span className="truncate text-[12px] font-medium text-chalk">
+                    <span className="truncate text-[12px] font-medium text-ink">
                       {event.title}
                     </span>
                     {!event.readOnly && (
                       <LockKeyhole
-                        size={10}
-                        className="shrink-0 text-ember/70"
+                        size={9}
+                        className="shrink-0 text-lime"
                         aria-label="Mutation"
                       />
                     )}
                   </span>
-                  <span className="mt-0.5 flex items-center gap-1.5 font-mono text-[9px] text-mist/60">
+                  <span className="mt-0.5 flex items-center gap-1.5 font-mono text-[8px] text-mist">
                     <span className="truncate">{event.tool}</span>
                     <span>·</span>
                     <span>{formatOffset(offsetMs(run.startedAt, event.at))}</span>
@@ -234,11 +251,7 @@ export default function RunPlayer({ run }: { run: Run }) {
 
       <section className="min-w-0 space-y-4">
         {selected ? (
-          <EventInspector
-            run={run}
-            event={selected}
-            index={selectedIndex}
-          />
+          <EventInspector run={run} event={selected} index={selectedIndex} />
         ) : (
           <div className="panel p-8 text-center text-sm text-mist">
             This run has no events.
@@ -249,7 +262,7 @@ export default function RunPlayer({ run }: { run: Run }) {
           <div className="flex flex-wrap items-start justify-between gap-3">
             <div>
               <p className="mono-label">Run integrity</p>
-              <p className="mt-1 max-w-md text-xs leading-relaxed text-mist">
+              <p className="mt-1 max-w-md text-[11px] leading-relaxed text-mist">
                 Each event commits to the one before it, and the run manifest
                 commits to the title, verdict, mode, and event head. Change a
                 field and the verifier fails — it runs in your browser.
@@ -258,9 +271,9 @@ export default function RunPlayer({ run }: { run: Run }) {
             <button
               type="button"
               onClick={download}
-              className="inline-flex items-center gap-1.5 rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2 font-mono text-[9px] uppercase tracking-[0.12em] text-mist transition-colors hover:border-white/20 hover:text-chalk"
+              className="inline-flex items-center gap-1.5 rounded border border-line bg-paper-2/45 px-3 py-2 font-mono text-[8px] uppercase tracking-[0.1em] text-mist transition-colors hover:border-line-strong hover:text-ink"
             >
-              <ArrowDownToLine size={11} /> Export JSON
+              <ArrowDownToLine size={10} /> Export JSON
             </button>
           </div>
 
@@ -268,8 +281,8 @@ export default function RunPlayer({ run }: { run: Run }) {
             {run.integrity?.head ? (
               <IntegritySeal run={run} />
             ) : (
-              <div className="flex items-center gap-2 rounded-xl border border-sky/20 bg-sky/[0.04] px-4 py-3 text-xs text-sky">
-                <TriangleAlert size={14} />
+              <div className="flex items-center gap-2 rounded-lg border border-sky/25 bg-sky/[0.04] px-4 py-3 text-[11px] text-sky">
+                <TriangleAlert size={13} />
                 Unsealed import — this run has no hash chain yet.
               </div>
             )}
@@ -284,21 +297,54 @@ export default function RunPlayer({ run }: { run: Run }) {
                   setPlaying(false);
                   setSelectedId(event.id);
                 }}
-                className={`h-10 min-w-[76px] shrink-0 rounded-md border px-2 text-left font-mono transition-colors ${
+                className={`h-10 min-w-[76px] shrink-0 rounded border px-2 text-left font-mono transition-colors ${
                   selected?.id === event.id
-                    ? "border-lime/30 bg-lime/[0.06]"
-                    : "border-white/[0.07] bg-white/[0.015] hover:border-white/15"
+                    ? "border-lime/40 bg-lime/[0.05]"
+                    : "border-line bg-paper-2/40 hover:border-line-strong"
                 }`}
               >
-                <span className="block text-[8px] text-mist/50">
+                <span className="block text-[7px] text-mist">
                   {String(index + 1).padStart(2, "0")}
                 </span>
-                <span className="block truncate text-[9px] text-chalk/70">
+                <span className="block truncate text-[8px] text-ink/75">
                   {event.hash ? shortHash(event.hash, 6) : "unsealed"}
                 </span>
               </button>
             ))}
           </div>
+        </div>
+
+        <div className="panel p-5">
+          <ReviewChecklist
+            items={[
+              {
+                id: "snapshot",
+                label: "Read the page state",
+                note: `${snapshotEvents} snapshot event${
+                  snapshotEvents === 1 ? "" : "s"
+                } in this run`,
+              },
+              {
+                id: "evidence",
+                label: "Inspect the evidence",
+                note: `${evidenceItems} evidence item${
+                  evidenceItems === 1 ? "" : "s"
+                } · screenshots or text`,
+              },
+              {
+                id: "chain",
+                label: "Verify the chain",
+                note: `${run.integrity.algorithm} · ${run.events.length} events${
+                  run.integrity.manifest ? " + manifest" : ""
+                }`,
+              },
+              {
+                id: "export",
+                label: "Keep the receipt",
+                note: "Export JSON · it stays on your machine",
+              },
+            ]}
+          />
         </div>
       </section>
     </div>
@@ -318,12 +364,12 @@ function EventInspector({
 
   return (
     <div className="panel overflow-hidden">
-      <div className="border-b border-white/[0.06] p-5">
+      <div className="border-b border-line p-5">
         <div className="flex flex-wrap items-center gap-2">
-          <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-mist/60">
+          <span className="font-mono text-[9px] uppercase tracking-[0.16em] text-mist">
             Event {String(index + 1).padStart(2, "0")}
           </span>
-          <span className="text-mist/30">/</span>
+          <span className="text-mist/40">/</span>
           <SurfaceBadge surface={event.surface} />
           <span className="ml-auto flex items-center gap-2">
             <span className="chip">
@@ -337,23 +383,23 @@ function EventInspector({
           </span>
         </div>
 
-        <h2 className="mt-3 text-xl font-semibold tracking-[-0.03em] text-chalk sm:text-2xl">
+        <h2 className="mt-3 text-[24px] font-medium leading-tight tracking-[-0.025em] text-ink sm:text-[28px]">
           {event.title}
         </h2>
-        <p className="mt-1.5 text-sm leading-relaxed text-mist">
+        <p className="mt-1.5 text-[13px] leading-relaxed text-mist">
           {event.summary}
         </p>
 
-        <div className="mt-4 flex flex-wrap items-center gap-2 font-mono text-[10px]">
-          <span className="rounded-md border border-white/10 bg-white/[0.03] px-2 py-1 text-chalk/80">
+        <div className="mt-4 flex flex-wrap items-center gap-2 font-mono text-[9px]">
+          <span className="rounded border border-line bg-paper-2/50 px-2 py-1 text-ink/80">
             {event.tool}
           </span>
           {event.target && (
-            <span className="max-w-full truncate rounded-md border border-white/[0.06] px-2 py-1 text-mist/70">
+            <span className="max-w-full truncate rounded border border-line px-2 py-1 text-mist">
               {event.target}
             </span>
           )}
-          <span className="text-mist/45">{formatTime(event.at)} UTC</span>
+          <span className="text-mist/70">{formatTime(event.at)} UTC</span>
         </div>
       </div>
 
@@ -361,16 +407,16 @@ function EventInspector({
         {event.args && Object.keys(event.args).length > 0 && (
           <div>
             <p className="mono-label">Arguments</p>
-            <div className="mt-2 overflow-hidden rounded-xl border border-white/[0.06] bg-black/20">
+            <div className="mt-2 overflow-hidden rounded-lg border border-line bg-paper-2/40">
               {Object.entries(event.args).map(([key, value]) => (
                 <div
                   key={key}
-                  className="flex gap-3 border-b border-white/[0.05] px-3 py-2 last:border-0"
+                  className="flex gap-3 border-b border-line px-3 py-2 last:border-0"
                 >
-                  <span className="w-28 shrink-0 font-mono text-[10px] text-mist/55">
+                  <span className="w-28 shrink-0 font-mono text-[9px] text-mist">
                     {key}
                   </span>
-                  <span className="min-w-0 break-all font-mono text-[10px] text-chalk/85">
+                  <span className="min-w-0 break-all font-mono text-[9px] text-ink/85">
                     {formatValue(value)}
                   </span>
                 </div>
@@ -385,11 +431,11 @@ function EventInspector({
               <p className="mono-label">Result</p>
               <CopyButton value={event.result.excerpt} />
             </div>
-            <pre className="mt-2 max-h-[230px] overflow-auto whitespace-pre-wrap break-words rounded-xl border border-white/[0.06] bg-black/25 p-4 font-mono text-[11px] leading-relaxed text-chalk/80">
+            <pre className="mt-2 max-h-[230px] overflow-auto whitespace-pre-wrap break-words rounded-lg border border-line bg-[#f0ebdf] p-4 font-mono text-[10px] leading-relaxed text-ink/85">
               {event.result.excerpt}
             </pre>
             {event.result.meta && (
-              <p className="mt-1.5 font-mono text-[9px] uppercase tracking-[0.1em] text-mist/50">
+              <p className="mt-1.5 font-mono text-[8px] uppercase tracking-[0.1em] text-mist/70">
                 {event.result.meta}
               </p>
             )}
@@ -404,16 +450,16 @@ function EventInspector({
           />
         ))}
 
-        <div className="flex flex-wrap items-center gap-2 border-t border-white/[0.06] pt-4 font-mono text-[9px] text-mist/55">
-          <Hash size={10} />
+        <div className="flex flex-wrap items-center gap-2 border-t border-line pt-4 font-mono text-[8px] text-mist">
+          <Hash size={9} />
           <span>
             prev {event.prevHash ? shortHash(event.prevHash) : "unsealed"}
           </span>
-          <ChevronRight size={10} />
-          <span className="text-lime/70">
+          <ChevronRight size={9} />
+          <span className="text-lime">
             {event.hash ? shortHash(event.hash) : "unsealed"}
           </span>
-          <span className="ml-auto uppercase tracking-[0.1em]">
+          <span className="ml-auto uppercase tracking-[0.08em]">
             {tool?.category ?? "tool"} · {formatDuration(run.durationMs)}
           </span>
         </div>
@@ -434,19 +480,19 @@ function EvidenceView({
       <div>
         <div className="flex flex-wrap items-center justify-between gap-2">
           <p className="mono-label">{evidence.label}</p>
-          <span className="font-mono text-[9px] uppercase tracking-[0.08em] text-mist/45">
+          <span className="font-mono text-[8px] uppercase tracking-[0.08em] text-mist/70">
             {evidence.note}
           </span>
         </div>
-        <div className="browser-frame mt-2 overflow-hidden rounded-xl">
-          <div className="flex items-center gap-1.5 border-b border-white/[0.07] bg-white/[0.03] px-3 py-2">
-            <span className="h-2 w-2 rounded-full bg-ember/70" />
-            <span className="h-2 w-2 rounded-full bg-[#ffc857]/70" />
-            <span className="h-2 w-2 rounded-full bg-mint/70" />
-            <span className="ml-2 min-w-0 flex-1 truncate rounded-md bg-black/30 px-2 py-0.5 font-mono text-[9px] text-mist/60">
+        <div className="browser-frame mt-2 overflow-hidden rounded-lg">
+          <div className="flex items-center gap-1.5 border-b border-line bg-paper-2/60 px-3 py-2">
+            <span className="h-2 w-2 rounded-full bg-ember/60" />
+            <span className="h-2 w-2 rounded-full bg-[#c59a3a]/60" />
+            <span className="h-2 w-2 rounded-full bg-mint/50" />
+            <span className="ml-2 min-w-0 flex-1 truncate rounded bg-paper px-2 py-0.5 font-mono text-[8px] text-mist">
               {event.target ?? evidence.label}
             </span>
-            <span className="font-mono text-[8px] uppercase tracking-wider text-mist/40">
+            <span className="font-mono text-[7px] uppercase tracking-wider text-mist/60">
               JPEG
             </span>
           </div>
@@ -454,7 +500,7 @@ function EvidenceView({
           <img
             src={evidence.src}
             alt={evidence.label}
-            className="w-full bg-[#0b0e12]"
+            className="w-full bg-paper-2"
             loading="lazy"
           />
         </div>
@@ -465,29 +511,29 @@ function EvidenceView({
   if (evidence.kind === "screen") {
     return (
       <div
-        className={`rounded-xl border p-4 ${
+        className={`rounded-lg border p-4 ${
           evidence.redacted
-            ? "border-sky/20 bg-sky/[0.03]"
-            : "border-lime/15 bg-lime/[0.02]"
+            ? "border-sky/25 bg-sky/[0.03]"
+            : "border-lime/20 bg-lime/[0.02]"
         }`}
       >
         <div className="flex flex-wrap items-center gap-2">
           <Monitor
-            size={13}
+            size={12}
             className={evidence.redacted ? "text-sky" : "text-lime"}
           />
           <span className="mono-label">{evidence.label}</span>
           {evidence.redacted && (
-            <span className="rounded-full border border-sky/25 px-2 py-0.5 font-mono text-[8px] uppercase tracking-[0.12em] text-sky">
+            <span className="rounded-full border border-sky/25 px-2 py-0.5 font-mono text-[7px] uppercase tracking-[0.12em] text-sky">
               redacted
             </span>
           )}
         </div>
-        <p className="mt-2 text-xs leading-relaxed text-chalk/75">
+        <p className="mt-2 text-[11px] leading-relaxed text-ink/80">
           {evidence.content}
         </p>
         {evidence.note && (
-          <p className="mt-2 font-mono text-[9px] uppercase tracking-[0.08em] text-mist/45">
+          <p className="mt-2 font-mono text-[8px] uppercase tracking-[0.08em] text-mist/70">
             {evidence.note}
           </p>
         )}
@@ -501,14 +547,14 @@ function EvidenceView({
         <p className="mono-label">{evidence.label}</p>
         <div className="flex items-center gap-3">
           {evidence.note && (
-            <span className="font-mono text-[9px] uppercase tracking-[0.08em] text-mist/45">
+            <span className="font-mono text-[8px] uppercase tracking-[0.08em] text-mist/70">
               {evidence.note}
             </span>
           )}
           {evidence.content && <CopyButton value={evidence.content} />}
         </div>
       </div>
-      <pre className="mt-2 max-h-[260px] overflow-auto whitespace-pre-wrap break-words rounded-xl border border-white/[0.06] bg-black/25 p-4 font-mono text-[11px] leading-relaxed text-chalk/75">
+      <pre className="mt-2 max-h-[260px] overflow-auto whitespace-pre-wrap break-words rounded-lg border border-line bg-[#f0ebdf] p-4 font-mono text-[10px] leading-relaxed text-ink/80">
         {evidence.content}
       </pre>
     </div>

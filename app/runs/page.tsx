@@ -6,7 +6,7 @@ import RunFilters from "@/components/RunFilters";
 export const metadata = {
   title: "Runs",
   description:
-    "The Witness evidence room: sealed, replayable runs from Browsy and Clinqy.",
+    "The Vouch evidence room: sealed, replayable runs from the browser and the Mac.",
 };
 
 export default function RunsPage() {
@@ -18,41 +18,37 @@ export default function RunsPage() {
 
   return (
     <div>
-      <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <p className="eyebrow">Evidence room</p>
-          <h1 className="mt-2 text-3xl font-semibold tracking-[-0.045em] text-chalk sm:text-4xl">
-            Runs
-          </h1>
-          <p className="mt-3 max-w-xl text-sm leading-relaxed text-mist">
-            A run is a sealed JSON document: every tool call, the arguments it
-            received, the evidence it produced, and the hash chain that binds
-            them together.
-          </p>
-        </div>
+      <div className="border-b border-line pb-8">
+        <p className="eyebrow">Evidence room</p>
+        <h1 className="display mt-3 text-[54px] leading-[0.92] text-ink sm:text-[64px]">
+          Runs
+        </h1>
+        <p className="mt-4 max-w-xl text-[14px] leading-relaxed text-mist">
+          A run is a sealed JSON document: every tool call, the arguments it
+          received, the evidence it produced, and the hash chain that binds them
+          together.
+        </p>
 
-        <div className="flex flex-wrap gap-2">
+        <div className="mt-5 flex flex-wrap gap-2">
           <span className="chip">{runs.length} runs</span>
           <span className="chip">{totalEvents} events</span>
           <span className="chip">{totalEvidence} evidence</span>
         </div>
+
+        <div className="mt-6 flex flex-wrap gap-2">
+          <Link href="/capture" className="btn-primary">
+            <Plus size={14} /> New capture
+          </Link>
+          <Link href="/runs/local" className="btn-ghost">
+            Imported run <ArrowUpRight size={13} />
+          </Link>
+        </div>
       </div>
 
-      <div className="mt-5 flex flex-wrap gap-2">
-        <Link href="/capture" className="btn-primary">
-          <Plus size={15} /> New capture
-        </Link>
-        <Link href="/runs/local" className="btn-ghost">
-          Imported run <ArrowUpRight size={14} />
-        </Link>
-      </div>
-
-      <RunFilters runs={runs} />
-
-      <div className="mt-8 flex items-start gap-3 rounded-2xl border border-white/[0.07] bg-white/[0.02] p-4">
+      <div className="mt-5 flex items-start gap-3 rounded-lg border border-line bg-paper-2/45 p-4">
         <LockKeyhole size={14} className="mt-0.5 shrink-0 text-lime" />
-        <p className="text-xs leading-relaxed text-mist">
-          <span className="font-medium text-chalk">
+        <p className="text-[11px] leading-relaxed text-mist">
+          <span className="font-medium text-ink">
             Rendered from local exports.
           </span>{" "}
           There is no database behind this page. The live run is a real capture;
@@ -60,6 +56,8 @@ export default function RunsPage() {
           of the recorder.
         </p>
       </div>
+
+      <RunFilters runs={runs} />
     </div>
   );
 }

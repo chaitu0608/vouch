@@ -2,7 +2,7 @@
   "id": "run-payout",
   "title": "Cross-check a payout in Chrome and Numbers",
   "task": "Compare a payout total in a web dashboard with the finance sheet in a native app, flag any mismatch, and stop before editing.",
-  "summary": "Browsy read the payout total from a finance dashboard. Clinqy looked at the native Numbers sheet, then dry-ran the comparison step. The run found a $40 mismatch and made no edits.",
+  "summary": "Browser read the payout total from a finance dashboard. The native runtime looked at the Numbers sheet, then dry-ran the comparison step. The run found a $40 mismatch and made no edits.",
   "verdict": {
     "label": "Mismatch found",
     "detail": "$12,480.00 in the dashboard vs $12,520.00 in the sheet — a $40.00 difference. Nothing was edited.",
@@ -11,7 +11,7 @@
   "startedAt": "2026-10-18T11:04:22+05:30",
   "durationMs": 35200,
   "mode": "sample",
-  "agent": "Job Pilot MCP · Browsy + Clinqy",
+  "agent": "Vouch local bridge",
   "tags": [
     "finance",
     "cross-surface",
@@ -108,9 +108,9 @@
     },
     {
       "id": "evt_05",
-      "tool": "clinqy_look",
+      "tool": "native_look",
       "title": "Look at the native sheet",
-      "summary": "Clinqy read the active Numbers window and reported the value in the finance row.",
+      "summary": "The native runtime read the active Numbers window and reported the value in the finance row.",
       "surface": "native",
       "readOnly": true,
       "status": "ok",
@@ -124,20 +124,20 @@
       "evidence": [
         {
           "kind": "screen",
-          "label": "Clinqy · Numbers sheet",
+          "label": "Native · Numbers sheet",
           "content": "Numbers · Finance 2026 · row 14: Payout October · $12,520.00. Selected cell: F14.",
           "note": "SAMPLE · native observation"
         }
       ],
       "at": "2026-10-18T05:34:32.800Z",
       "prevHash": "a48c559596f34a0a46a1d4c7d71551fb1dfbbffaf049035aaac3c4e2ba5a60b6",
-      "hash": "b562fcdd576362dbc5cfd13df5092e4d60825f881dfd481078613e624c2a7fa7"
+      "hash": "e6590c39f92e44613a725da91b263c56339691cb114b5802bc26011bc6b20698"
     },
     {
       "id": "evt_06",
-      "tool": "clinqy_run",
+      "tool": "native_run",
       "title": "Dry-run the comparison",
-      "summary": "Clinqy previewed the native step without acting. It would select row 14, read the amount, and stop before any edit.",
+      "summary": "The native runtime previewed the next step without acting. It would select row 14, read the amount, and stop before any edit.",
       "surface": "native",
       "readOnly": false,
       "status": "ok",
@@ -151,8 +151,8 @@
         "meta": "dry run · 0 mutations"
       },
       "at": "2026-10-18T05:34:37.420Z",
-      "prevHash": "b562fcdd576362dbc5cfd13df5092e4d60825f881dfd481078613e624c2a7fa7",
-      "hash": "49983d0bcb6e29cb677bf1ce9b43507a3b787e467dcd4200ec139f91b8af991c"
+      "prevHash": "e6590c39f92e44613a725da91b263c56339691cb114b5802bc26011bc6b20698",
+      "hash": "d95ea0575ebc0ba65de3e7919908a01379a8e97d098c84fbc3d88d191bb50449"
     },
     {
       "id": "evt_07",
@@ -171,14 +171,14 @@
         "meta": "cleanup"
       },
       "at": "2026-10-18T05:34:44.600Z",
-      "prevHash": "49983d0bcb6e29cb677bf1ce9b43507a3b787e467dcd4200ec139f91b8af991c",
-      "hash": "c209bdbc404b2889b59118e3e775eb986357f80683165ce5710d2f84a86d5044"
+      "prevHash": "d95ea0575ebc0ba65de3e7919908a01379a8e97d098c84fbc3d88d191bb50449",
+      "hash": "9260a9377284e6b3199a99de2d87225c086f95bc426f2d036ff4d8cbf0300a2b"
     }
   ],
   "integrity": {
     "algorithm": "SHA-256",
-    "head": "c209bdbc404b2889b59118e3e775eb986357f80683165ce5710d2f84a86d5044",
+    "head": "9260a9377284e6b3199a99de2d87225c086f95bc426f2d036ff4d8cbf0300a2b",
     "events": 7,
-    "manifest": "ec7c8ac08b25e8f7a93b74e23b1285532f4014f0a99a69e42fc919e0ce22f49a"
+    "manifest": "449c87862e0686d84ca0134d08af60d620984645100e83d2a9d4d2c3b9bb5074"
   }
 }

@@ -37,13 +37,13 @@ export default function RunFilters({ runs }: { runs: Run[] }) {
         <div className="relative w-full sm:max-w-xs">
           <Search
             size={14}
-            className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-mist/50"
+            className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-mist"
           />
           <input
             value={query}
             onChange={(event) => setQuery(event.target.value)}
             placeholder="Search runs, tags, outcomes…"
-            className="w-full rounded-xl border border-white/10 bg-white/[0.03] py-2.5 pl-9 pr-3 text-sm text-chalk placeholder:text-mist/45 focus:border-lime/40 focus:outline-none"
+            className="w-full rounded-md border border-line bg-panel py-2.5 pl-9 pr-3 text-sm text-ink placeholder:text-mist/60 focus:border-line-strong focus:outline-none"
           />
         </div>
 
@@ -53,10 +53,10 @@ export default function RunFilters({ runs }: { runs: Run[] }) {
               key={item}
               type="button"
               onClick={() => setFilter(item)}
-              className={`rounded-full border px-3 py-1.5 font-mono text-[9px] uppercase tracking-[0.1em] transition-colors ${
+              className={`rounded-full border px-3 py-1.5 font-mono text-[8px] uppercase tracking-[0.1em] transition-colors ${
                 filter === item
-                  ? "border-lime/30 bg-lime/[0.07] text-lime"
-                  : "border-white/10 text-mist hover:border-white/20 hover:text-chalk"
+                  ? "border-lime/30 bg-lime/[0.06] text-lime"
+                  : "border-line text-mist hover:border-line-strong hover:text-ink"
               }`}
             >
               {item}
@@ -69,7 +69,7 @@ export default function RunFilters({ runs }: { runs: Run[] }) {
         <p className="mono-label">
           {filtered.length} run{filtered.length === 1 ? "" : "s"}
         </p>
-        <p className="inline-flex items-center gap-1.5 font-mono text-[9px] uppercase tracking-[0.1em] text-mist/45">
+        <p className="inline-flex items-center gap-1.5 font-mono text-[8px] uppercase tracking-[0.1em] text-mist/70">
           <SlidersHorizontal size={10} /> filtered locally
         </p>
       </div>
@@ -91,7 +91,7 @@ export default function RunFilters({ runs }: { runs: Run[] }) {
               setQuery("");
               setFilter("All");
             }}
-            className="mt-3 text-xs font-medium text-lime hover:text-[#dcff8a]"
+            className="mt-3 text-xs font-medium text-lime hover:opacity-70"
           >
             Reset filters
           </button>

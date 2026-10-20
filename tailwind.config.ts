@@ -9,47 +9,46 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        ink: "#05070a",
-        coal: "#080b10",
-        panel: "#0b1016",
-        mist: "#8a97a6",
-        chalk: "#e9eef4",
-        lime: "#c8ff4a",
-        mint: "#7dffc4",
-        sky: "#66d9ff",
-        ember: "#ff7a59",
+        // Vouch is a paper-and-ink product, not a dark dashboard.
+        // The old names are kept so the existing components can share
+        // one palette while the interface is migrated.
+        paper: "#f4f1e9",
+        "paper-2": "#ebe6da",
+        "paper-3": "#e1dbcc",
+        ink: "#161512",
+        coal: "#211f1a",
+        panel: "#faf8f2",
+        mist: "#746e62",
+        chalk: "#161512",
+        line: "#d7d0c0",
+        "line-strong": "#bdb4a1",
+        lime: "#d83a1d",
+        mint: "#3d6b50",
+        sky: "#2f55c7",
+        ember: "#b23a1a",
       },
       fontFamily: {
         sans: ["var(--font-sans)", "system-ui", "sans-serif"],
+        serif: ["var(--font-serif)", "Georgia", "serif"],
         mono: ["var(--font-mono)", "ui-monospace", "SFMono-Regular", "monospace"],
       },
       boxShadow: {
-        glow: "0 0 80px -20px rgba(200,255,74,0.35)",
-        panel: "0 30px 80px -40px rgba(0,0,0,0.9)",
+        paper: "0 1px 0 rgba(22, 21, 18, 0.04), 0 18px 50px -34px rgba(22, 21, 18, 0.3)",
+        lift: "0 24px 70px -38px rgba(22, 21, 18, 0.42)",
       },
       keyframes: {
         pulseDot: {
           "0%, 100%": { opacity: "1", transform: "scale(1)" },
-          "50%": { opacity: "0.35", transform: "scale(0.75)" },
+          "50%": { opacity: "0.4", transform: "scale(0.8)" },
         },
-        float: {
+        drift: {
           "0%, 100%": { transform: "translateY(0px)" },
-          "50%": { transform: "translateY(-7px)" },
-        },
-        scan: {
-          "0%": { transform: "translateY(-120%)" },
-          "100%": { transform: "translateY(520%)" },
-        },
-        sweep: {
-          "0%": { transform: "translateX(-120%)" },
-          "100%": { transform: "translateX(220%)" },
+          "50%": { transform: "translateY(-5px)" },
         },
       },
       animation: {
         "pulse-dot": "pulseDot 2.4s ease-in-out infinite",
-        float: "float 7s ease-in-out infinite",
-        scan: "scan 5s linear infinite",
-        sweep: "sweep 2.8s ease-in-out infinite",
+        drift: "drift 7s ease-in-out infinite",
       },
     },
   },

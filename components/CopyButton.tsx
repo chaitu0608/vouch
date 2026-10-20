@@ -28,9 +28,9 @@ export default function CopyButton({
     <button
       type="button"
       onClick={() => void copy()}
-      className={`inline-flex items-center gap-1 font-mono text-[9px] uppercase tracking-[0.12em] text-mist transition-colors hover:text-chalk ${className}`}
+      className={`inline-flex items-center gap-1 font-mono text-[8px] uppercase tracking-[0.12em] text-mist transition-colors hover:text-ink ${className}`}
     >
-      {copied ? <Check size={10} className="text-lime" /> : <Copy size={10} />}
+      {copied ? <Check size={10} className="text-mint" /> : <Copy size={10} />}
       {copied ? "Copied" : label}
     </button>
   );

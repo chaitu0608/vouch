@@ -1,5 +1,5 @@
 {
-  "name": "witness",
+  "name": "vouch",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -8,6 +8,9 @@
     "build": "next build",
     "start": "next start",
     "seal": "node scripts/seal-runs.mjs",
+    "verify": "node scripts/verify-run.mjs",
+    "verify:all": "node scripts/verify-run.mjs data/runs/*.json",
+    "diff": "node scripts/diff-runs.mjs",
     "record": "node scripts/record-run.mjs"
   },
   "dependencies": {

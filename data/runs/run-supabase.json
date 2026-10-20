@@ -2,7 +2,7 @@
   "id": "run-supabase",
   "title": "Qualify a remote SRE role",
   "task": "Open a live job posting, extract the real must-haves, and check whether the role is actually remote — without applying.",
-  "summary": "Browsy opened the Supabase posting in a real session, snapshotted the role, and extracted the requirements. Clinqy checked the native window. The run ended with a qualification note and no application action.",
+  "summary": "Browser opened the Supabase posting in a real session, snapshotted the role, and extracted the requirements. The native runtime checked the active window. The run ended with a qualification note and no application action.",
   "verdict": {
     "label": "Qualified",
     "detail": "Remote-global, senior SRE scope. Compensation was not posted, so pay remains unknown.",
@@ -11,7 +11,7 @@
   "startedAt": "2026-10-19T18:12:04+05:30",
   "durationMs": 48600,
   "mode": "sample",
-  "agent": "Job Pilot MCP · Browsy + Clinqy",
+  "agent": "Vouch local bridge",
   "tags": [
     "research",
     "job-search",
@@ -159,9 +159,9 @@
     },
     {
       "id": "evt_07",
-      "tool": "clinqy_look",
+      "tool": "native_look",
       "title": "Native window check",
-      "summary": "Clinqy checked the active native window while the posting was frontmost. No compensation figure was visible.",
+      "summary": "Native checked the active native window while the posting was frontmost. No compensation figure was visible.",
       "surface": "native",
       "readOnly": true,
       "status": "ok",
@@ -175,14 +175,14 @@
       "evidence": [
         {
           "kind": "screen",
-          "label": "Clinqy · native context",
+          "label": "Native · screen context",
           "content": "Browser window frontmost. Posting visible: Site Reliability Engineer · Supabase · Remote, Global. No salary field in the captured viewport.",
           "note": "SAMPLE · native observation, shortened for the demo"
         }
       ],
       "at": "2026-10-19T12:42:21.120Z",
       "prevHash": "2af5e6583de086fb9f68621831f90478faaf689961f77e76f3d14f06eb89c62f",
-      "hash": "5717eaec730f2c5386552d5d05353baccad902acce3202c4c903950ec7ec7d4c"
+      "hash": "f68c58c96e526e11b2fd71480ccf2fdd429a1ec0b39c16c885832577b0cb9ea0"
     },
     {
       "id": "evt_08",
@@ -201,14 +201,14 @@
         "meta": "run complete"
       },
       "at": "2026-10-19T12:42:25.460Z",
-      "prevHash": "5717eaec730f2c5386552d5d05353baccad902acce3202c4c903950ec7ec7d4c",
-      "hash": "699803cce62f412e9a1b36f2b5c1cb974c493b5279708fd0f644fb44166bb126"
+      "prevHash": "f68c58c96e526e11b2fd71480ccf2fdd429a1ec0b39c16c885832577b0cb9ea0",
+      "hash": "cd4dcea456679ee0fad18c89492e100d5b2285b6081ff62d1b60f255ffef21de"
     }
   ],
   "integrity": {
     "algorithm": "SHA-256",
-    "head": "699803cce62f412e9a1b36f2b5c1cb974c493b5279708fd0f644fb44166bb126",
+    "head": "cd4dcea456679ee0fad18c89492e100d5b2285b6081ff62d1b60f255ffef21de",
     "events": 8,
-    "manifest": "071fdcd27041b0b077542572a0a68032d46892d340bc26f0dbb18f2e40c3696a"
+    "manifest": "9daf0415a367055c195a8a97321dd9d3d98cf39b57c2aaee58b15e4c64b3ba01"
   }
 }

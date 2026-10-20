@@ -3,11 +3,27 @@
 @tailwind utilities;
 
 :root {
-  color-scheme: dark;
+  color-scheme: light;
+  --paper: #f4f1e9;
+  --paper-2: #ebe6da;
+  --paper-3: #e1dbcc;
+  --ink: #161512;
+  --ink-2: #38352e;
+  --mist: #746e62;
+  --line: #d7d0c0;
+  --line-strong: #bdb4a1;
+  --signal: #d83a1d;
+  --signal-dark: #b52f16;
+  --web: #2f55c7;
+  --native: #b23a1a;
+  --ok: #3d6b50;
+  --font-ui: var(--font-sans), system-ui, sans-serif;
+  --font-display: var(--font-serif), Georgia, serif;
+  --font-code: var(--font-mono), ui-monospace, SFMono-Regular, monospace;
 }
 
 * {
-  border-color: rgba(255, 255, 255, 0.07);
+  border-color: var(--line);
 }
 
 html {
@@ -15,119 +31,394 @@ html {
 }
 
 body {
-  background-color: #05070a;
-  color: #e9eef4;
-  background-image:
-    radial-gradient(900px 520px at 12% -10%, rgba(200, 255, 74, 0.09), transparent 62%),
-    radial-gradient(900px 520px at 96% -4%, rgba(102, 217, 255, 0.075), transparent 58%),
-    radial-gradient(720px 480px at 50% 112%, rgba(125, 255, 196, 0.045), transparent 62%);
-  background-attachment: fixed;
+  background-color: var(--paper);
+  color: var(--ink);
   -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
 ::selection {
-  background: rgba(200, 255, 74, 0.24);
-  color: #ffffff;
+  background: rgba(216, 58, 29, 0.18);
+  color: var(--ink);
 }
 
 ::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
+  width: 9px;
+  height: 9px;
 }
 ::-webkit-scrollbar-track {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.11);
+  background: var(--line-strong);
   border-radius: 999px;
-  border: 2px solid #05070a;
+  border: 2px solid var(--paper);
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.18);
+  background: var(--mist);
 }
 
+@layer components {
+  .panel {
+    @apply rounded-xl border border-line bg-panel;
+  }
+
+  .panel-hover {
+    @apply transition-colors duration-300 hover:border-line-strong hover:bg-[#fdfbf6];
+  }
+
+  .eyebrow {
+    @apply font-mono text-[10px] font-medium uppercase tracking-[0.2em] text-mist;
+  }
+
+  .chip {
+    @apply inline-flex items-center gap-1.5 rounded-full border border-line bg-transparent px-2.5 py-1 font-mono text-[9px] uppercase tracking-[0.14em] text-mist;
+  }
+
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-md bg-ink px-4 py-2.5 text-sm font-medium text-paper transition-colors hover:bg-coal focus:outline-none focus-visible:ring-2 focus-visible:ring-ink/30;
+  }
+
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 rounded-md border border-line bg-transparent px-4 py-2.5 text-sm font-medium text-ink transition-colors hover:border-line-strong hover:bg-paper-2/60 focus:outline-none focus-visible:ring-2 focus-visible:ring-ink/20;
+  }
+
+  .mono-label {
+    @apply font-mono text-[9px] uppercase tracking-[0.16em] text-mist;
+  }
+
+  .hairline {
+    @apply h-px w-full bg-line;
+  }
+
+  .display {
+    font-family: var(--font-display);
+    font-weight: 400;
+    letter-spacing: -0.035em;
+  }
+
+  .code-surface {
+    @apply rounded-lg border border-line bg-[#eee9dd] font-mono text-[11px] leading-relaxed text-ink/80;
+  }
+
+  .link-underline {
+    @apply underline decoration-line-strong decoration-1 underline-offset-4 transition-colors hover:decoration-ink;
+  }
+}
+
+/* A faint registration grid, used only in the hero. */
 .grid-lines {
   background-image:
-    linear-gradient(to right, rgba(255, 255, 255, 0.032) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(255, 255, 255, 0.032) 1px, transparent 1px);
-  background-size: 58px 58px;
-  mask-image: radial-gradient(ellipse at 50% 0%, black 18%, transparent 78%);
-  -webkit-mask-image: radial-gradient(ellipse at 50% 0%, black 18%, transparent 78%);
+    linear-gradient(to right, rgba(22, 21, 18, 0.035) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(22, 21, 18, 0.035) 1px, transparent 1px);
+  background-size: 48px 48px;
+  mask-image: linear-gradient(to bottom, black, transparent 82%);
+  -webkit-mask-image: linear-gradient(to bottom, black, transparent 82%);
 }
 
 .dot-grid {
-  background-image: radial-gradient(rgba(255, 255, 255, 0.11) 1px, transparent 1px);
-  background-size: 20px 20px;
+  background-image: radial-gradient(rgba(22, 21, 18, 0.13) 0.75px, transparent 0.75px);
+  background-size: 15px 15px;
 }
 
 .text-balance {
   text-wrap: balance;
 }
 
-@layer components {
-  .panel {
-    @apply rounded-2xl border border-white/[0.07] bg-white/[0.025];
-  }
-
-  .panel-hover {
-    @apply transition-colors duration-300 hover:border-white/[0.14] hover:bg-white/[0.04];
-  }
-
-  .eyebrow {
-    @apply font-mono text-[10px] font-medium uppercase tracking-[0.22em] text-mist;
-  }
-
-  .chip {
-    @apply inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/[0.02] px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.14em] text-mist;
-  }
-
-  .btn-primary {
-    @apply inline-flex items-center justify-center gap-2 rounded-xl bg-lime px-4 py-2.5 text-sm font-semibold text-ink transition-colors hover:bg-[#d6ff73] focus:outline-none focus-visible:ring-2 focus-visible:ring-lime/60;
-  }
-
-  .btn-ghost {
-    @apply inline-flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/[0.03] px-4 py-2.5 text-sm font-medium text-chalk transition-colors hover:border-white/20 hover:bg-white/[0.06] focus:outline-none focus-visible:ring-2 focus-visible:ring-white/20;
-  }
-
-  .mono-label {
-    @apply font-mono text-[10px] uppercase tracking-[0.18em] text-mist;
-  }
-
-  .hairline {
-    @apply h-px w-full bg-gradient-to-r from-transparent via-white/10 to-transparent;
-  }
-}
-
 .browser-frame {
-  background: #0a0e13;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 40px 100px -50px rgba(0, 0, 0, 1);
-}
-
-.scanline {
-  position: relative;
-  overflow: hidden;
-}
-.scanline::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  height: 28%;
-  background: linear-gradient(to bottom, transparent, rgba(200, 255, 74, 0.055), transparent);
-  animation: scan 6s linear infinite;
-  pointer-events: none;
-}
-
-.glow-ring {
+  background: #faf8f2;
+  border: 1px solid var(--line);
   box-shadow:
-    0 0 0 1px rgba(200, 255, 74, 0.16),
-    0 0 60px -18px rgba(200, 255, 74, 0.45);
+    0 1px 0 rgba(22, 21, 18, 0.04),
+    0 24px 60px -42px rgba(22, 21, 18, 0.35);
 }
 
-.fade-mask-b {
-  mask-image: linear-gradient(to bottom, black 65%, transparent 100%);
-  -webkit-mask-image: linear-gradient(to bottom, black 65%, transparent 100%);
+.stamp {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--signal);
+  color: var(--signal);
+  font-family: var(--font-mono);
+  font-size: 8px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  line-height: 1;
+  text-transform: uppercase;
+  transform: rotate(-7deg);
+  padding: 7px 9px;
+  border-radius: 2px;
+}
+
+.rec-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--signal);
+  box-shadow: 0 0 0 3px rgba(216, 58, 29, 0.1);
+}
+
+/* ── Bencho Step player, adapted ─────────────────────────────
+   The original is a row of pills where the current step stretches
+   into a bar and fills. This version is controlled by the run
+   player. MIT, Lorenzo Cabra — see components/bencho/LICENSE. */
+.vch-step {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+}
+
+.vch-step-track {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: 5px;
+  min-width: 0;
+}
+
+.vch-step-dot {
+  position: relative;
+  height: 7px;
+  flex: none;
+  overflow: hidden;
+  border: 0;
+  border-radius: 999px;
+  background: var(--line);
+  padding: 0;
+  cursor: pointer;
+  transition:
+    width 480ms cubic-bezier(0.22, 1, 0.36, 1),
+    background-color 180ms ease;
+}
+
+.vch-step-dot:hover {
+  background: var(--line-strong);
+}
+
+.vch-step-dot[data-done="true"] {
+  background: var(--ink);
+}
+
+.vch-step-dot[data-active="true"] {
+  background: var(--line);
+}
+
+.vch-step-ink {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 100%;
+  border-radius: 999px;
+  background: var(--signal);
+  transform: scaleX(0);
+  transform-origin: left center;
+}
+
+.vch-step-dot[data-active="true"][data-playing="false"] .vch-step-ink {
+  transform: scaleX(1);
+}
+
+.vch-step-dot[data-active="true"][data-playing="true"] .vch-step-ink {
+  animation: vch-fill 2.6s linear forwards;
+}
+
+.vch-step-count {
+  flex: none;
+  font-family: var(--font-code);
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  color: var(--mist);
+}
+
+@keyframes vch-fill {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+/* ── Bencho Checklist, adapted ──────────────────────────────
+   The box fills, the tick draws in, and the label gives up its
+   ink. MIT, Lorenzo Cabra — see components/bencho/LICENSE. */
+.vch-check {
+  display: flex;
+  flex-direction: column;
+}
+
+.vch-check-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 11px;
+  border-top: 1px solid var(--line);
+  padding: 11px 0;
+  cursor: pointer;
+  text-align: left;
+}
+
+.vch-check-row:first-child {
+  border-top: 0;
+}
+
+.vch-check-box {
+  position: relative;
+  display: flex;
+  width: 17px;
+  height: 17px;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--line-strong);
+  border-radius: 4px;
+  background: transparent;
+  margin-top: 1px;
+  transition:
+    background-color 180ms ease,
+    border-color 180ms ease,
+    transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.vch-check-row:hover .vch-check-box {
+  border-color: var(--ink-2);
+}
+
+.vch-check-row[data-on="true"] .vch-check-box {
+  border-color: var(--ink);
+  background: var(--ink);
+  transform: scale(1.04);
+}
+
+.vch-check-box svg {
+  width: 11px;
+  height: 11px;
+  overflow: visible;
+}
+
+.vch-check-box path {
+  fill: none;
+  stroke: var(--paper);
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 22;
+  stroke-dashoffset: 22;
+  transition: stroke-dashoffset 320ms cubic-bezier(0.22, 1, 0.36, 1) 50ms;
+}
+
+.vch-check-row[data-on="true"] .vch-check-box path {
+  stroke-dashoffset: 0;
+}
+
+.vch-check-label {
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.45;
+  color: var(--ink);
+  transition:
+    color 180ms ease,
+    text-decoration-color 180ms ease;
+}
+
+.vch-check-row[data-on="true"] .vch-check-label {
+  color: var(--mist);
+  text-decoration: line-through;
+  text-decoration-color: var(--line-strong);
+  text-decoration-thickness: 1px;
+}
+
+.vch-check-note {
+  margin-top: 2px;
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--mist);
+}
+
+/* ── Bencho Stacked bars, adapted ───────────────────────────
+   Bars grow from a baseline; a hovered column gets a ring and a
+   small tooltip. MIT, Lorenzo Cabra — see components/bencho/LICENSE. */
+.vch-mix {
+  position: relative;
+}
+
+.vch-mix-plot {
+  display: flex;
+  height: 148px;
+  align-items: flex-end;
+  gap: 10px;
+  border-bottom: 1px solid var(--ink);
+  padding: 0 4px;
+}
+
+.vch-mix-col {
+  position: relative;
+  display: flex;
+  height: 100%;
+  flex: 1;
+  align-items: flex-end;
+  justify-content: center;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+}
+
+.vch-mix-stack {
+  display: flex;
+  width: 100%;
+  max-width: 42px;
+  flex-direction: column-reverse;
+  border-radius: 3px 3px 0 0;
+  overflow: hidden;
+  outline: 1px solid transparent;
+  outline-offset: 3px;
+  transition:
+    outline-color 180ms ease,
+    opacity 180ms ease;
+}
+
+.vch-mix-col[data-on="true"] .vch-mix-stack {
+  outline-color: var(--signal);
+}
+
+.vch-mix-col[data-dim="true"] .vch-mix-stack {
+  opacity: 0.45;
+}
+
+.vch-mix-seg {
+  width: 100%;
+  min-height: 2px;
+  border-top: 1px solid var(--paper);
+}
+
+.vch-mix-labels {
+  display: flex;
+  gap: 10px;
+  padding: 7px 4px 0;
+}
+
+.vch-mix-label {
+  flex: 1;
+  text-align: center;
+  font-family: var(--font-code);
+  font-size: 8px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--mist);
+}
+
+.vch-mix-tip {
+  position: absolute;
+  right: 0;
+  top: 0;
+  min-width: 148px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--paper);
+  box-shadow: 0 14px 40px -24px rgba(22, 21, 18, 0.45);
+  padding: 8px 10px;
+  pointer-events: none;
 }
 
 @media (prefers-reduced-motion: reduce) {
