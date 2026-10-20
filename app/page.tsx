@@ -75,6 +75,14 @@ export default function HomePage() {
   } catch {
     /* keep the raw excerpt */
   }
+  let adminUsers = 1;
+  try {
+    const parsed = JSON.parse(adminResponse) as { users?: unknown[] };
+    if (Array.isArray(parsed.users)) adminUsers = parsed.users.length;
+  } catch {
+    /* keep the fallback */
+  }
+  const adminBytes = new TextEncoder().encode(adminResponse).length;
 
   return (
     <div>
@@ -174,10 +182,10 @@ export default function HomePage() {
               <div className="mt-3 flex flex-wrap items-center justify-between gap-2">
                 <span className="inline-flex items-center gap-1.5 font-mono text-[8px] uppercase tracking-[0.14em] text-lime">
                   <span className="h-1 w-1 rounded-full bg-lime" />
-                  1 user record exposed
+                  {adminUsers} user record{adminUsers === 1 ? "" : "s"} exposed
                 </span>
                 <span className="inline-flex items-center gap-1.5 font-mono text-[8px] uppercase tracking-[0.14em] text-mist/45">
-                  <FileJson size={9} /> 96 bytes · real capture
+                  <FileJson size={9} /> {adminBytes} bytes · real capture
                 </span>
               </div>
             </div>
