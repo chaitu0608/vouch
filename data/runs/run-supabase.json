@@ -1,0 +1,214 @@
+{
+  "id": "run-supabase",
+  "title": "Qualify a remote SRE role",
+  "task": "Open a live job posting, extract the real must-haves, and check whether the role is actually remote — without applying.",
+  "summary": "Browsy opened the Supabase posting in a real session, snapshotted the role, and extracted the requirements. Clinqy checked the native window. The run ended with a qualification note and no application action.",
+  "verdict": {
+    "label": "Qualified",
+    "detail": "Remote-global, senior SRE scope. Compensation was not posted, so pay remains unknown.",
+    "tone": "clear"
+  },
+  "startedAt": "2026-10-19T18:12:04+05:30",
+  "durationMs": 48600,
+  "mode": "sample",
+  "agent": "Job Pilot MCP · Browsy + Clinqy",
+  "tags": [
+    "research",
+    "job-search",
+    "read-only"
+  ],
+  "events": [
+    {
+      "id": "evt_01",
+      "tool": "browser_list_tabs",
+      "title": "Find the working tab",
+      "summary": "One active tab was available. The recorder keeps a stable tab id for the whole run.",
+      "surface": "web",
+      "readOnly": true,
+      "status": "ok",
+      "args": {},
+      "result": {
+        "excerpt": "[{\"id\":118204552,\"title\":\"New tab\",\"url\":\"about:blank\",\"active\":true}]",
+        "meta": "1 tab"
+      },
+      "at": "2026-10-19T12:42:04.000Z",
+      "prevHash": "GENESIS",
+      "hash": "8633bc6517b6c9046cf1ff039bf9416ba69d6ab76b7304d6508f2d34a6a34b3e"
+    },
+    {
+      "id": "evt_02",
+      "tool": "browser_open_tab",
+      "title": "Open the posting",
+      "summary": "Opened the Ashby posting for the Supabase SRE role in the foreground.",
+      "surface": "web",
+      "readOnly": false,
+      "status": "ok",
+      "target": "https://jobs.ashbyhq.com/supabase/ed6cedb1-b9bf-4609-ac5c-c75c33b31bf3",
+      "args": {
+        "url": "https://jobs.ashbyhq.com/supabase/ed6cedb1-b9bf-4609-ac5c-c75c33b31bf3",
+        "active": true,
+        "confirmed": true
+      },
+      "result": {
+        "excerpt": "{\"id\":118204553,\"url\":\"https://jobs.ashbyhq.com/supabase/ed6cedb1-b9bf-4609-ac5c-c75c33b31bf3\",\"active\":true}",
+        "meta": "tab 118204553"
+      },
+      "at": "2026-10-19T12:42:05.240Z",
+      "prevHash": "8633bc6517b6c9046cf1ff039bf9416ba69d6ab76b7304d6508f2d34a6a34b3e",
+      "hash": "39fc891f2795d45ebc911496cdca0d9a1eb43228d5463fc037b754a5c1c961ca"
+    },
+    {
+      "id": "evt_03",
+      "tool": "browser_wait",
+      "title": "Let the page hydrate",
+      "summary": "Waited 900 ms for the posting body to render before reading it.",
+      "surface": "web",
+      "readOnly": true,
+      "status": "ok",
+      "args": {
+        "tabId": 118204553,
+        "milliseconds": 900
+      },
+      "result": {
+        "excerpt": "Page settled.",
+        "meta": "900 ms"
+      },
+      "at": "2026-10-19T12:42:07.820Z",
+      "prevHash": "39fc891f2795d45ebc911496cdca0d9a1eb43228d5463fc037b754a5c1c961ca",
+      "hash": "b95b4965dca15b164c1de2cf5f769d357f5fbf813d1935bac747e5cf10eba96f"
+    },
+    {
+      "id": "evt_04",
+      "tool": "browser_snapshot",
+      "title": "Read the role",
+      "summary": "Captured the title, company, location, and the requirements section from the visible page.",
+      "surface": "web",
+      "readOnly": true,
+      "status": "ok",
+      "target": "https://jobs.ashbyhq.com/supabase/ed6cedb1-b9bf-4609-ac5c-c75c33b31bf3",
+      "args": {
+        "tabId": 118204553
+      },
+      "result": {
+        "excerpt": "Site Reliability Engineer · Supabase · Remote, Global\n\nHave 7+ years of experience in SRE, production engineering, or reliability-focused roles.\nDefine meaningful SLIs and SLOs. Own the Operational Readiness Review process.\nKubernetes, OpenTelemetry, Pulumi, AWS.",
+        "meta": "role + requirements"
+      },
+      "evidence": [
+        {
+          "kind": "dom",
+          "label": "Snapshot · posting",
+          "content": "Site Reliability Engineer · Supabase · Remote, Global\n\nHave 7+ years of experience in SRE, production engineering, or reliability-focused roles.\nDefine meaningful SLIs and SLOs. Own the Operational Readiness Review process.\nKubernetes, OpenTelemetry, Pulumi, AWS.",
+          "note": "SAMPLE · structured from the public posting"
+        }
+      ],
+      "at": "2026-10-19T12:42:09.640Z",
+      "prevHash": "b95b4965dca15b164c1de2cf5f769d357f5fbf813d1935bac747e5cf10eba96f",
+      "hash": "4242786c2b29b54d9bd21cd6973206ff6196e5c196a5e571b74801f679767891"
+    },
+    {
+      "id": "evt_05",
+      "tool": "browser_get_html",
+      "title": "Extract the structured page",
+      "summary": "Read the posting HTML to confirm the location metadata and the apply URL, rather than trusting the rendered text alone.",
+      "surface": "web",
+      "readOnly": true,
+      "status": "ok",
+      "target": "https://jobs.ashbyhq.com/supabase/ed6cedb1-b9bf-4609-ac5c-c75c33b31bf3",
+      "args": {
+        "tabId": 118204553,
+        "selector": "main",
+        "maxLength": 200000
+      },
+      "result": {
+        "excerpt": "<main>…<h1>Site Reliability Engineer</h1>…<div>Remote, Global</div>…<a href=\"…/application\">Apply</a>…</main>",
+        "meta": "HTML excerpt"
+      },
+      "evidence": [
+        {
+          "kind": "dom",
+          "label": "HTML · location + apply URL",
+          "content": "<h1>Site Reliability Engineer</h1>\n<div>Remote, Global</div>\n<a href=\"https://jobs.ashbyhq.com/supabase/ed6cedb1-b9bf-4609-ac5c-c75c33b31bf3/application\">Apply</a>",
+          "note": "SAMPLE · browser_get_html"
+        }
+      ],
+      "at": "2026-10-19T12:42:13.180Z",
+      "prevHash": "4242786c2b29b54d9bd21cd6973206ff6196e5c196a5e571b74801f679767891",
+      "hash": "ba85d126d68a04733a10e4849fec3e80ca4f4f84b3578450b875cb6382df80b1"
+    },
+    {
+      "id": "evt_06",
+      "tool": "browser_scroll",
+      "title": "Reach the benefits section",
+      "summary": "Scrolled to load the lower half of the posting: remote policy, ESOP, and the tech allowance.",
+      "surface": "web",
+      "readOnly": false,
+      "status": "ok",
+      "args": {
+        "tabId": 118204553,
+        "direction": "down",
+        "amount": 900,
+        "confirmed": true
+      },
+      "result": {
+        "excerpt": "Scrolled 900 px.",
+        "meta": "mutation · confirmed"
+      },
+      "at": "2026-10-19T12:42:16.600Z",
+      "prevHash": "ba85d126d68a04733a10e4849fec3e80ca4f4f84b3578450b875cb6382df80b1",
+      "hash": "2af5e6583de086fb9f68621831f90478faaf689961f77e76f3d14f06eb89c62f"
+    },
+    {
+      "id": "evt_07",
+      "tool": "clinqy_look",
+      "title": "Native window check",
+      "summary": "Clinqy checked the active native window while the posting was frontmost. No compensation figure was visible.",
+      "surface": "native",
+      "readOnly": true,
+      "status": "ok",
+      "args": {
+        "mode": "page"
+      },
+      "result": {
+        "excerpt": "Browser window frontmost. Posting visible: Site Reliability Engineer · Supabase · Remote, Global. No salary field in the captured viewport.",
+        "meta": "SAMPLE observation"
+      },
+      "evidence": [
+        {
+          "kind": "screen",
+          "label": "Clinqy · native context",
+          "content": "Browser window frontmost. Posting visible: Site Reliability Engineer · Supabase · Remote, Global. No salary field in the captured viewport.",
+          "note": "SAMPLE · native observation, shortened for the demo"
+        }
+      ],
+      "at": "2026-10-19T12:42:21.120Z",
+      "prevHash": "2af5e6583de086fb9f68621831f90478faaf689961f77e76f3d14f06eb89c62f",
+      "hash": "5717eaec730f2c5386552d5d05353baccad902acce3202c4c903950ec7ec7d4c"
+    },
+    {
+      "id": "evt_08",
+      "tool": "browser_release",
+      "title": "Release the tab",
+      "summary": "Cleared the element refs and ended the run. No application was opened and no form was filled.",
+      "surface": "web",
+      "readOnly": false,
+      "status": "ok",
+      "args": {
+        "tabId": 118204553,
+        "confirmed": true
+      },
+      "result": {
+        "excerpt": "refs released",
+        "meta": "run complete"
+      },
+      "at": "2026-10-19T12:42:25.460Z",
+      "prevHash": "5717eaec730f2c5386552d5d05353baccad902acce3202c4c903950ec7ec7d4c",
+      "hash": "699803cce62f412e9a1b36f2b5c1cb974c493b5279708fd0f644fb44166bb126"
+    }
+  ],
+  "integrity": {
+    "algorithm": "SHA-256",
+    "head": "699803cce62f412e9a1b36f2b5c1cb974c493b5279708fd0f644fb44166bb126",
+    "events": 8,
+    "manifest": "071fdcd27041b0b077542572a0a68032d46892d340bc26f0dbb18f2e40c3696a"
+  }
+}

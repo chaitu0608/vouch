@@ -1,0 +1,269 @@
+{
+  "id": "run-admin",
+  "title": "Prove an unauthenticated admin endpoint",
+  "task": "Open a local vibe-coded API in a real browser, inspect the admin surface anonymously, and capture evidence — without sending a single mutation.",
+  "summary": "Browsy discovered the browser session, opened the app, read the landing page, then requested /api/admin/users with no credentials. The endpoint returned the seeded user record with HTTP 200. Clinqy ran a native context check; its raw screen output was withheld by the privacy filter before the run was sealed.",
+  "verdict": {
+    "label": "Exposure confirmed",
+    "detail": "GET /api/admin/users returned 1 user record with HTTP 200 and no authorization header.",
+    "tone": "find"
+  },
+  "startedAt": "2026-10-20T15:37:10+05:30",
+  "durationMs": 21240,
+  "mode": "live",
+  "agent": "Job Pilot MCP · Chrome for Testing",
+  "tags": [
+    "security",
+    "session-native",
+    "redaction"
+  ],
+  "events": [
+    {
+      "id": "evt_01",
+      "tool": "browser_list_tabs",
+      "title": "Discover the browser session",
+      "summary": "Browsy found one disposable Chrome tab. This is the only tab the recorder touched.",
+      "surface": "web",
+      "readOnly": true,
+      "status": "ok",
+      "args": {},
+      "result": {
+        "excerpt": "[{\"id\":298708308,\"title\":\"about:blank\",\"url\":\"about:blank\",\"active\":true,\"windowId\":298708307}]",
+        "meta": "1 tab · read-only"
+      },
+      "at": "2026-10-20T10:07:10.000Z",
+      "prevHash": "GENESIS",
+      "hash": "b9156bf93f6b04d69581692f368d481e243a42e5dd6c4083fb832986b9e93263"
+    },
+    {
+      "id": "evt_02",
+      "tool": "browser_open_tab",
+      "title": "Open the target app",
+      "summary": "Opened the local Vibe Shop API in a new foreground tab. The target is a synthetic corpus app, not production.",
+      "surface": "web",
+      "readOnly": false,
+      "status": "ok",
+      "target": "http://127.0.0.1:4311/",
+      "args": {
+        "url": "http://127.0.0.1:4311/",
+        "active": true,
+        "confirmed": true
+      },
+      "result": {
+        "excerpt": "{\"id\":298708309,\"windowId\":298708307,\"url\":\"http://127.0.0.1:4311/\",\"active\":true,\"status\":\"loading\"}",
+        "meta": "tab 298708309"
+      },
+      "at": "2026-10-20T10:07:11.420Z",
+      "prevHash": "b9156bf93f6b04d69581692f368d481e243a42e5dd6c4083fb832986b9e93263",
+      "hash": "8349196d040b53bd185068370b7eff512fa2adb861f85b76b0ea76802bdd673f"
+    },
+    {
+      "id": "evt_03",
+      "tool": "browser_snapshot",
+      "title": "Read the landing page",
+      "summary": "A structured snapshot recorded the page title, heading, visible text, and interactive refs.",
+      "surface": "web",
+      "readOnly": true,
+      "status": "ok",
+      "target": "http://127.0.0.1:4311/",
+      "args": {
+        "tabId": 298708309
+      },
+      "result": {
+        "excerpt": "{\"refs\":0,\"title\":\"\",\"url\":\"http://127.0.0.1:4311/\"}\nheading \"Vibe Shop\"\n\n--- visible text ---\nVibe Shop",
+        "meta": "0 refs · 1 heading"
+      },
+      "evidence": [
+        {
+          "kind": "dom",
+          "label": "Snapshot · landing page",
+          "content": "heading \"Vibe Shop\"\n\n--- visible text ---\nVibe Shop",
+          "note": "browser_snapshot · structured DOM view"
+        }
+      ],
+      "at": "2026-10-20T10:07:13.180Z",
+      "prevHash": "8349196d040b53bd185068370b7eff512fa2adb861f85b76b0ea76802bdd673f",
+      "hash": "1ed3543466fa3de5bf1c0648b7582a2390e57a35e0a5204683ff8094986a261b"
+    },
+    {
+      "id": "evt_04",
+      "tool": "browser_screenshot",
+      "title": "Capture the landing page",
+      "summary": "A viewport JPEG was written into the run. Screenshots are evidence, not decoration.",
+      "surface": "web",
+      "readOnly": true,
+      "status": "ok",
+      "target": "http://127.0.0.1:4311/",
+      "args": {
+        "tabId": 298708309
+      },
+      "result": {
+        "excerpt": "Screenshot captured (image/jpeg, 1600x1016).",
+        "meta": "image/jpeg · 1600×1016"
+      },
+      "evidence": [
+        {
+          "kind": "screenshot",
+          "label": "Landing page",
+          "src": "/evidence/admin-home.jpg",
+          "note": "Browsy · viewport capture"
+        }
+      ],
+      "at": "2026-10-20T10:07:14.360Z",
+      "prevHash": "1ed3543466fa3de5bf1c0648b7582a2390e57a35e0a5204683ff8094986a261b",
+      "hash": "dffb44ce559035b4cc64f66429230c9650dea6712d79267860f5d39262bb3e8f"
+    },
+    {
+      "id": "evt_05",
+      "tool": "browser_navigate",
+      "title": "Request the admin route",
+      "summary": "Navigated directly to the admin surface with no cookie, token, or authorization header.",
+      "surface": "web",
+      "readOnly": false,
+      "status": "ok",
+      "target": "http://127.0.0.1:4311/api/admin/users",
+      "args": {
+        "tabId": 298708309,
+        "url": "http://127.0.0.1:4311/api/admin/users",
+        "confirmed": true
+      },
+      "result": {
+        "excerpt": "{\"ok\":true,\"id\":298708309,\"url\":\"http://127.0.0.1:4311/api/admin/users\"}",
+        "meta": "navigation accepted"
+      },
+      "at": "2026-10-20T10:07:16.120Z",
+      "prevHash": "dffb44ce559035b4cc64f66429230c9650dea6712d79267860f5d39262bb3e8f",
+      "hash": "7a67419cf05b38a10e00c01cf9470cfc2299866007586e5b4b571f0e367efce3"
+    },
+    {
+      "id": "evt_06",
+      "tool": "browser_wait",
+      "title": "Wait for the response to settle",
+      "summary": "Waited 800 ms so the browser rendered the JSON body before reading it.",
+      "surface": "web",
+      "readOnly": true,
+      "status": "ok",
+      "args": {
+        "tabId": 298708309,
+        "milliseconds": 800
+      },
+      "result": {
+        "excerpt": "Page settled.",
+        "meta": "800 ms"
+      },
+      "at": "2026-10-20T10:07:17.480Z",
+      "prevHash": "7a67419cf05b38a10e00c01cf9470cfc2299866007586e5b4b571f0e367efce3",
+      "hash": "c62ecd0915195ab524500ed4b31d3b06e183224e6389ff019436b511e80a306c"
+    },
+    {
+      "id": "evt_07",
+      "tool": "browser_snapshot",
+      "title": "Read the admin response",
+      "summary": "The visible text is a user record. No login step exists between the request and this data.",
+      "surface": "web",
+      "readOnly": true,
+      "status": "ok",
+      "target": "http://127.0.0.1:4311/api/admin/users",
+      "args": {
+        "tabId": 298708309
+      },
+      "result": {
+        "excerpt": "{\"users\":[{\"id\":\"u1\",\"email\":\"audit-demo@example.org\",\"role\":\"member\"}],\"total\":1}",
+        "meta": "1 record · 200 OK"
+      },
+      "evidence": [
+        {
+          "kind": "dom",
+          "label": "Snapshot · admin response",
+          "content": "{\"users\":[{\"id\":\"u1\",\"email\":\"audit-demo@example.org\",\"role\":\"member\"}],\"total\":1}",
+          "note": "browser_snapshot · visible text"
+        }
+      ],
+      "at": "2026-10-20T10:07:18.620Z",
+      "prevHash": "c62ecd0915195ab524500ed4b31d3b06e183224e6389ff019436b511e80a306c",
+      "hash": "bfbdc782dd2d4b92ac45de253142ba624b6f578cb4e9d2e5be2f43aa54f75fa4"
+    },
+    {
+      "id": "evt_08",
+      "tool": "browser_screenshot",
+      "title": "Capture the exposed response",
+      "summary": "The visual receipt: a 200 response containing a user record, rendered without any authentication.",
+      "surface": "web",
+      "readOnly": true,
+      "status": "ok",
+      "target": "http://127.0.0.1:4311/api/admin/users",
+      "args": {
+        "tabId": 298708309
+      },
+      "result": {
+        "excerpt": "Screenshot captured (image/jpeg, 1600x1016).",
+        "meta": "HTTP 200 · no auth header"
+      },
+      "evidence": [
+        {
+          "kind": "screenshot",
+          "label": "Admin response · 200 OK",
+          "src": "/evidence/admin-route.jpg",
+          "note": "Browsy · viewport capture · unauthenticated"
+        }
+      ],
+      "at": "2026-10-20T10:07:20.040Z",
+      "prevHash": "bfbdc782dd2d4b92ac45de253142ba624b6f578cb4e9d2e5be2f43aa54f75fa4",
+      "hash": "cd3b5d75f668d52b8f2d8c3bedf1a17f4f8ca2af506a18a2f75e23430eaa928b"
+    },
+    {
+      "id": "evt_09",
+      "tool": "clinqy_look",
+      "title": "Native context check",
+      "summary": "Clinqy was asked to read the active screen. The raw observation was withheld by the recorder's native-screen policy before sealing.",
+      "surface": "native",
+      "readOnly": true,
+      "status": "redacted",
+      "args": {
+        "mode": "page"
+      },
+      "result": {
+        "excerpt": "Native observation captured. Output withheld — redaction policy: native-screen.",
+        "meta": "redacted by policy"
+      },
+      "evidence": [
+        {
+          "kind": "screen",
+          "label": "Clinqy · native observation",
+          "redacted": true,
+          "content": "Raw native captures stay local by default. This run proves the check executed; it does not publish unrelated desktop content.",
+          "note": "redaction policy · native-screen"
+        }
+      ],
+      "at": "2026-10-20T10:07:22.180Z",
+      "prevHash": "cd3b5d75f668d52b8f2d8c3bedf1a17f4f8ca2af506a18a2f75e23430eaa928b",
+      "hash": "0140c8117e0b55f614133e0fc4377e0a32889ae9876186e52ffe05aa47e24cd4"
+    },
+    {
+      "id": "evt_10",
+      "tool": "browser_release",
+      "title": "Release element refs",
+      "summary": "Cleared the short-lived ref map. No further actions were possible against this tab without a fresh snapshot.",
+      "surface": "web",
+      "readOnly": false,
+      "status": "ok",
+      "args": {
+        "tabId": 298708309,
+        "confirmed": true
+      },
+      "result": {
+        "excerpt": "refs released",
+        "meta": "tab released"
+      },
+      "at": "2026-10-20T10:07:24.760Z",
+      "prevHash": "0140c8117e0b55f614133e0fc4377e0a32889ae9876186e52ffe05aa47e24cd4",
+      "hash": "693b25b94d769700fddc3be06a8419c87190ab17014967eaaabe91f19637fa4b"
+    }
+  ],
+  "integrity": {
+    "algorithm": "SHA-256",
+    "head": "693b25b94d769700fddc3be06a8419c87190ab17014967eaaabe91f19637fa4b",
+    "events": 10,
+    "manifest": "b84edec72327475065ce3c7d400abce0866404ca4789463250a239837d753728"
+  }
+}
